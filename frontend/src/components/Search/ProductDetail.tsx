@@ -5,6 +5,7 @@ import PageContainer from "../Layout/PageContainer";
 import Alert from '../common/Alert';
 import AppIcon from "../common/AppIcon";
 import Spinner from '../common/Spinner';
+import SapStatus from '../common/SapStatus';
 import {
   isProductPreviewEnabled,
   previewProductAccounts,
@@ -245,6 +246,7 @@ export default function ProductDetail() {
                 {t("search.product.versionHistory")}
               </Link>
             </div>
+            <SapStatus />
           </section>
         )}
 
