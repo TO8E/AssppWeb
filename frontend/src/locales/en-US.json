@@ -50,7 +50,14 @@
       "searchAppsDesc": "Find apps on the App Store by name or ID.",
       "viewDownloads": "View Downloads",
       "viewDownloadsDesc": "Check download progress and manage packages."
-    }
+    },
+    "accountCount": "{{count}} accounts",
+    "addAccountHint": "Add an account to download apps.",
+    "recentDownloads": "Recent downloads",
+    "viewAll": "View all",
+    "noDownloads": "No downloads yet. Search for an app to get started.",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts"
   },
   "search": {
     "title": "Search",

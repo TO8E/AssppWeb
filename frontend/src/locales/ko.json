@@ -50,7 +50,12 @@
       "searchAppsDesc": "App Store에서 이름이나 ID로 앱을 찾으세요.",
       "viewDownloads": "다운로드 보기",
       "viewDownloadsDesc": "진행 상황을 확인하고 패키지를 관리하세요."
-    }
+    },
+    "accountCount": "계정 {{count}}개",
+    "addAccountHint": "앱을 다운로드하려면 계정을 추가하세요.",
+    "recentDownloads": "최근 다운로드",
+    "viewAll": "모두 보기",
+    "noDownloads": "다운로드 기록이 없습니다. 앱을 검색해 시작하세요."
   },
   "search": {
     "title": "검색",

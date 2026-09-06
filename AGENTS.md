@@ -176,7 +176,8 @@ The backend proxies the bag endpoint via `GET /api/bag?guid=<deviceId>` using No
 - **AppIcon** — 3 sizes (40/56/80px), rounded corners, letter fallback
 - **Badge** — color-coded status pill
 - **ProgressBar** — gray track, blue fill, percentage label
-- **icons** — shared SVG icon components (`HomeIcon`, `AccountsIcon`, `SearchIcon`, `DownloadsIcon`, `SettingsIcon`, `SunIcon`, `MoonIcon`, `SystemIcon`) used by Sidebar, MobileNav, and MobileHeader
+- **icons** — shared SVG icon components for navigation and controls, including `ChevronRightIcon` and `CloseIcon`. Use SVG disclosure indicators instead of font glyphs such as `›`, whose visual alignment depends on the font baseline.
+- Home uses the existing downloads store populated by `GlobalDownloadNotifier`, with active tasks first and at most six recent entries. Do not add duplicate statistics requests or a promotional hero to this task-focused page.
 
 ### Frontend Shared Utilities (`utils/`)
 
@@ -326,7 +327,8 @@ The `e2e/docker-test.sh` script automates the full flow: build, test, and verify
 
 - Single elevation: white cards on `gray-50` background
 - No shadows. Borders only where they serve function (form inputs, dividers, interactive boundaries)
-- Rounded corners: `rounded-lg` (8px) for cards, `rounded-md` (6px) for inputs/buttons, `rounded-full` for badges
+- Rounded corners: `rounded-lg` (12px) for cards, `rounded-md` (8px) for inputs/buttons, `rounded-full` for badges
+- Follow the restrained typography, clear hierarchy, immediate feedback and accessibility guidance from [apple-design](https://github.com/emilkowalski/skills/tree/main/skills/apple-design). Keep decorative gradients and glow effects out of the utility interface; preserve the intentional 350 ms version lookup debounce.
 - Prefer background tinting (`gray-50` → `gray-100`) over borders for visual containment
 
 ### Layout

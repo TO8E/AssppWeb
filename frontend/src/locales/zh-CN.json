@@ -50,7 +50,12 @@
       "searchAppsDesc": "通过名称或 ID 在 App Store 查找应用。",
       "viewDownloads": "查看下载",
       "viewDownloadsDesc": "查看下载进度并管理安装包。"
-    }
+    },
+    "accountCount": "{{count}} 个账号",
+    "addAccountHint": "添加账号后即可下载应用。",
+    "recentDownloads": "最近下载",
+    "viewAll": "查看全部",
+    "noDownloads": "暂无下载记录，搜索应用开始下载。"
   },
   "search": {
     "title": "搜索",

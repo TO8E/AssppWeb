@@ -50,7 +50,12 @@
       "searchAppsDesc": "Ищите приложения в App Store по названию или ID.",
       "viewDownloads": "Мои загрузки",
       "viewDownloadsDesc": "Просмотр прогресса загрузки и управление пакетами."
-    }
+    },
+    "accountCount": "Аккаунтов: {{count}}",
+    "addAccountHint": "Добавьте аккаунт для загрузки приложений.",
+    "recentDownloads": "Последние загрузки",
+    "viewAll": "Показать все",
+    "noDownloads": "Загрузок пока нет. Найдите нужное приложение."
   },
   "search": {
     "title": "Поиск",

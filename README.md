@@ -16,7 +16,7 @@ Successful labels are cached in the browser by app and storefront, with up to 1,
 
 SAP initialization runs in the browser and can take roughly two minutes in Chrome on the upstream test machine. Components are cached, but refreshing the page or changing account device identifiers requires a new signer. See the [SAP implementation notes](frontend/src/apple/sap/README.md) for measurement limitations.
 
-![preview](./resources/preview.png)
+The home page provides direct app search and the six most recent downloads, with active tasks shown first. The interface uses system typography, compact controls and shared SVG icons, following the [apple-design guidelines](https://github.com/emilkowalski/skills/tree/main/skills/apple-design) with restrained decoration.
 
 ## Zero-Trust Architecture
 
