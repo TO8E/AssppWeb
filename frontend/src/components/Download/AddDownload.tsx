@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
+import AccountSelect from '../common/AccountSelect';
 import AppIcon from "../common/AppIcon";
 import CountrySelect from "../common/CountrySelect";
 import { useAccounts } from "../../hooks/useAccounts";
@@ -183,24 +184,14 @@ export default function AddDownload() {
               disabled={isLoading}
               className="min-h-11 w-full min-w-0 max-w-full truncate disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 dark:disabled:bg-gray-800/50 dark:disabled:text-gray-400"
             />
-            <select
+            <AccountSelect
+              accounts={filteredAccounts}
               value={selectedAccount}
-              onChange={(e) => setSelectedAccount(e.target.value)}
+              onChange={setSelectedAccount}
+              emptyLabel={t('downloads.add.noAccountsForRegion')}
               className="min-h-11 w-full min-w-0 max-w-full truncate rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-800 dark:text-white"
               disabled={isLoading || filteredAccounts.length === 0}
-            >
-              {filteredAccounts.length > 0 ? (
-                filteredAccounts.map((a) => (
-                  <option key={a.email} value={a.email}>
-                    {a.firstName} {a.lastName} ({a.email})
-                  </option>
-                ))
-              ) : (
-                <option value="">
-                  {t("downloads.add.noAccountsForRegion")}
-                </option>
-              )}
-            </select>
+            />
           </div>
         </form>
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
+import AccountSelect from '../common/AccountSelect';
 import AppIcon from "../common/AppIcon";
 import { useAccounts } from "../../hooks/useAccounts";
 import { useDownloadAction } from "../../hooks/useDownloadAction";
@@ -131,17 +132,12 @@ export default function VersionHistory() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {t("search.versions.account")}
                 </label>
-                <select
+                <AccountSelect
+                  accounts={filteredAccounts}
                   value={selectedAccount}
-                  onChange={(e) => setSelectedAccount(e.target.value)}
+                  onChange={setSelectedAccount}
                   className="w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                >
-                  {filteredAccounts.map((a) => (
-                    <option key={a.email} value={a.email}>
-                      {a.firstName} {a.lastName} ({a.email})
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
               <button
                 onClick={handleLoadVersions}

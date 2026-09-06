@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
 import Spinner from "../common/Spinner";
 import SapStatus from "../common/SapStatus";
+import { useAccountRoutes } from '../../hooks/useAccountRoutes';
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useAccounts } from "../../hooks/useAccounts";
 import { useToastStore } from "../../store/toast";
 import { authenticate, AuthenticationError } from "../../apple/authenticate";
@@ -11,7 +13,8 @@ import { getErrorMessage } from "../../utils/error";
 import { storeIdToCountry } from "../../apple/config";
 
 export default function AccountDetail() {
-  const { email } = useParams<{ email: string }>();
+  const { email, accountId } = useParams<{ email: string; accountId: string }>();
+  const { privacyMode } = usePrivacy();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const {
@@ -32,10 +35,10 @@ export default function AccountDetail() {
     loadAccounts();
   }, [loadAccounts]);
 
-  const decodedEmail = email ? decodeURIComponent(email) : "";
-  const account = accounts.find((a) => a.email === decodedEmail);
+  const { ids, loading: routesLoading } = useAccountRoutes(accounts, privacyMode || Boolean(accountId));
+  const account = accounts.find((a) => accountId ? ids[a.email] === accountId : a.email === email);
 
-  if (storeLoading) {
+  if (storeLoading || routesLoading) {
     return (
       <PageContainer title={t("accounts.title")}>
         <div className="text-center text-gray-500 py-12">{t("loading")}</div>
@@ -44,6 +47,7 @@ export default function AccountDetail() {
   }
 
   if (!account) {
+    if (privacyMode && email) return <Navigate replace to="/accounts" />;
     return (
       <PageContainer title={t("accounts.title")}>
         <div className="text-center py-12">
@@ -57,6 +61,10 @@ export default function AccountDetail() {
         </div>
       </PageContainer>
     );
+  }
+
+  if (privacyMode && email) {
+    return <Navigate replace to={ids[account.email] ? `/accounts/id/${ids[account.email]}` : '/accounts'} />;
   }
 
   async function handleReauth() {
@@ -157,7 +165,7 @@ export default function AccountDetail() {
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
               <input
                 id="reauth-code"
-                type="text"
+                type={privacyMode ? "password" : "text"}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={6}
@@ -232,13 +240,14 @@ export default function AccountDetail() {
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {
+  const { mask } = usePrivacy();
   return (
     <div className="py-3 first:pt-0 last:pb-0">
       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
         {label}
       </dt>
       <dd className="mt-0.5 text-sm text-gray-900 dark:text-white break-all">
-        {value || "--"}
+        {mask(value) || "--"}
       </dd>
     </div>
   );

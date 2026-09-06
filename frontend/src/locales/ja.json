@@ -1,4 +1,16 @@
 {
+  "privacy": {
+    "title": "プライバシーモード",
+    "description": "ログインやダウンロードに影響せず、アカウント情報、機密情報、通知内容を非表示にします。",
+    "hidden": "非表示",
+    "account": "アカウント {{number}}",
+    "notificationContent": "プライバシーモード中は内容が非表示になります。",
+    "toast": {
+      "success": "操作が完了しました",
+      "error": "操作に失敗しました",
+      "info": "通知"
+    }
+  },
   "loading": "読み込み中...",
   "auth": {
     "title": "アクセスパスワード",

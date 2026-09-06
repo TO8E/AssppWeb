@@ -1,4 +1,16 @@
 {
+  "privacy": {
+    "title": "Privacy mode",
+    "description": "Hide account identities, sensitive information and notification content without changing sign-in or downloads.",
+    "hidden": "Hidden",
+    "account": "Account {{number}}",
+    "notificationContent": "Content is hidden while privacy mode is on.",
+    "toast": {
+      "success": "Action completed",
+      "error": "Action failed",
+      "info": "Notification"
+    }
+  },
   "loading": "Loading...",
   "auth": {
     "title": "Access Password",

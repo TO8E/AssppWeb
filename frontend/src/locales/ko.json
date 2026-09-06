@@ -1,4 +1,16 @@
 {
+  "privacy": {
+    "title": "개인정보 보호 모드",
+    "description": "로그인과 다운로드에 영향을 주지 않고 계정 정보, 민감한 정보 및 알림 내용을 숨깁니다.",
+    "hidden": "숨김",
+    "account": "계정 {{number}}",
+    "notificationContent": "개인정보 보호 모드에서는 내용이 숨겨집니다.",
+    "toast": {
+      "success": "작업 완료",
+      "error": "작업 실패",
+      "info": "알림"
+    }
+  },
   "loading": "로딩 중...",
   "auth": {
     "title": "접근 비밀번호",

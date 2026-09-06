@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
 import Modal from "../common/Modal";
+import { useSettingsStore } from '../../store/settings';
 import { useAccountsStore } from "../../store/accounts";
 import { useToastStore } from "../../store/toast";
 import { apiGet } from "../../api/client";
@@ -30,6 +31,8 @@ const entityTypes = [
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
+  const privacyMode = useSettingsStore((state) => state.privacyMode);
+  const setPrivacyMode = useSettingsStore((state) => state.setPrivacyMode);
   const { accounts, addAccount, updateAccount } = useAccountsStore();
   const addToast = useToastStore((s) => s.addToast);
 
@@ -176,6 +179,30 @@ export default function SettingsPage() {
     <PageContainer title={t("settings.title")}>
       <div className="min-w-0 space-y-6">
         <section className="min-w-0 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h2 id="privacy-mode-label" className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('privacy.title')}
+              </h2>
+              <p id="privacy-mode-description" className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('privacy.description')}
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={privacyMode}
+              aria-labelledby="privacy-mode-label"
+              aria-describedby="privacy-mode-description"
+              onClick={() => setPrivacyMode(!privacyMode)}
+              className={`relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ${privacyMode ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+            >
+              <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white transition-transform ${privacyMode ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+          </div>
+        </section>
+
+        <section className="min-w-0 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             {t("settings.language.title")}
           </h2>
@@ -266,7 +293,9 @@ export default function SettingsPage() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             {t("settings.server.title")}
           </h2>
-          {serverInfo ? (
+          {privacyMode ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('privacy.hidden')}</p>
+          ) : serverInfo ? (
             <div className="min-w-0 space-y-6">
               <dl className="min-w-0 divide-y divide-gray-100 dark:divide-gray-800">
                 {serverInfo.uptime != null && (

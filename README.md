@@ -6,6 +6,8 @@ This fork is maintained at [TO8E/AssppWeb](https://github.com/TO8E/AssppWeb), ba
 
 Existing Compose deployments can use the [separate build, activation and rollback scripts](tools/compose-update/README.md). Export browser accounts before switching versions. The scripts preserve the original Compose settings and do not reauthenticate Apple accounts.
 
+Enable **Privacy mode** in Settings to replace account identities with numbered labels and hide account fields, sensitive input text, notification contents, server information and install QR tooltips. The preference survives page reloads. Privacy-mode account detail links omit email addresses. This changes the displayed information; stored credentials, Apple requests and encrypted account exports retain their original data.
+
 SAP initialization runs in the browser and can take roughly two minutes in Chrome on the upstream test machine. Components are cached, but refreshing the page or changing account device identifiers requires a new signer. See the [SAP implementation notes](frontend/src/apple/sap/README.md) for measurement limitations.
 
 ![preview](./resources/preview.png)

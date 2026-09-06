@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useSapStore } from "../../store/sap";
 
 /**
@@ -11,6 +12,7 @@ import { useSapStore } from "../../store/sap";
  */
 export default function SapStatus() {
   const { t } = useTranslation();
+  const { mask } = usePrivacy();
   const stage = useSapStore((state) => state.stage);
   const percent = useSapStore((state) => state.percent);
   const error = useSapStore((state) => state.error);
@@ -20,7 +22,7 @@ export default function SapStatus() {
   if (stage === "error") {
     return (
       <span className="text-sm text-red-600 dark:text-red-400">
-        {t("accounts.addForm.signerFailed", { error: error ?? "" })}
+        {t("accounts.addForm.signerFailed", { error: mask(error ?? "") })}
       </span>
     );
   }

@@ -8,6 +8,7 @@ describe("store/settings", () => {
     useSettingsStore.setState({
       defaultCountry: "US",
       defaultEntity: "iPhone",
+      privacyMode: false,
     });
   });
 
@@ -29,5 +30,22 @@ describe("store/settings", () => {
   it("should update default entity", () => {
     useSettingsStore.getState().setDefaultEntity("iPad");
     expect(useSettingsStore.getState().defaultEntity).toBe("iPad");
+  });
+
+  it('persists privacy mode and restores it after rehydration', async () => {
+    useSettingsStore.getState().setPrivacyMode(true);
+    const persisted = localStorage.getItem('asspp-settings')!;
+    expect(JSON.parse(persisted).state.privacyMode).toBe(true);
+    useSettingsStore.setState({ privacyMode: false });
+    localStorage.setItem('asspp-settings', persisted);
+    await useSettingsStore.persist.rehydrate();
+    expect(useSettingsStore.getState().privacyMode).toBe(true);
+  });
+
+  it('keeps existing settings compatible when privacy mode is absent', async () => {
+    localStorage.setItem('asspp-settings', JSON.stringify({ state: { theme: 'dark' }, version: 0 }));
+    await useSettingsStore.persist.rehydrate();
+    expect(useSettingsStore.getState().theme).toBe('dark');
+    expect(useSettingsStore.getState().privacyMode).toBe(false);
   });
 });

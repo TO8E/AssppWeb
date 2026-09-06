@@ -80,6 +80,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/accounts" element={<AccountList />} />
               <Route path="/accounts/add" element={<AddAccountForm />} />
+              <Route path="/accounts/id/:accountId" element={<AccountDetail />} />
               <Route path="/accounts/:email" element={<AccountDetail />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/search/:appId" element={<ProductDetail />} />

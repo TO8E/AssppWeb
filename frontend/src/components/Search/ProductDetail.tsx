@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
+import AccountSelect from '../common/AccountSelect';
 import Alert from '../common/Alert';
 import AppIcon from "../common/AppIcon";
 import Spinner from '../common/Spinner';
@@ -193,18 +194,13 @@ export default function ProductDetail() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("search.product.account")}
               </label>
-              <select
+              <AccountSelect
+                accounts={filteredAccounts}
                 value={selectedAccount}
-                onChange={(e) => setSelectedAccount(e.target.value)}
+                onChange={setSelectedAccount}
                 className="min-h-11 w-full min-w-0 rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white"
                 disabled={loadingAction !== null}
-              >
-                {filteredAccounts.map((a) => (
-                  <option key={a.email} value={a.email}>
-                    {a.firstName} {a.lastName} ({a.email})
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div className="grid min-w-0 grid-flow-col auto-cols-fr gap-2 sm:gap-3">
               {(app.price === undefined || app.price === 0) && (

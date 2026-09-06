@@ -163,6 +163,9 @@ The backend proxies the bag endpoint via `GET /api/bag?guid=<deviceId>` using No
 
 ### Frontend Shared Components (`components/common/`)
 
+- **AccountSelect** — account selectors share privacy-aware labels and preserve the real selected account for operations.
+- Privacy mode is persisted in `asspp-settings` and affects display only. Use `usePrivacy` for account fields and raw error text; do not mask stored records, Apple requests or encrypted account exports. Hide sensitive hover titles and notification content too. Privacy-mode account links use opaque record identifiers, while legacy email routes remain compatible.
+
 - **Alert** — `<Alert type="error|success|warning">` for status messages (replaces inline alert divs)
 - **Modal** — `<Modal open={bool} onClose={fn} title={string}>` for dialog overlays
 - **Spinner** — inline SVG loading spinner for buttons

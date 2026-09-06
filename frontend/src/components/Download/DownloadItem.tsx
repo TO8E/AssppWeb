@@ -4,6 +4,7 @@ import AppIcon from '../common/AppIcon';
 import Badge from '../common/Badge';
 import ProgressBar from '../common/ProgressBar';
 import PackageQuickActions from './PackageQuickActions';
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { formatBytes } from '../../utils/format';
 import type { DownloadTask } from '../../types';
 
@@ -23,6 +24,7 @@ export default function DownloadItem({
   onDelete,
 }: DownloadItemProps) {
   const { t } = useTranslation();
+  const { mask } = usePrivacy();
 
   const isActive = task.status === 'downloading' || task.status === 'injecting';
   const isPaused = task.status === 'paused';
@@ -95,7 +97,7 @@ export default function DownloadItem({
 
       {task.error && (
         <p className="mt-3 break-words rounded-lg bg-red-50 p-2.5 text-xs font-medium text-red-700 dark:bg-red-950/40 dark:text-red-400">
-          {task.error}
+          {mask(task.error)}
         </p>
       )}
 

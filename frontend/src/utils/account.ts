@@ -29,6 +29,10 @@ export async function accountHash(account: Account): Promise<string> {
   return sha256Hex(source);
 }
 
+export function accountRouteId(email: string): Promise<string> {
+  return sha256Hex(`account-route:${email}`);
+}
+
 async function sha256Hex(value: string): Promise<string> {
   if (globalThis.crypto?.subtle) {
     const data = new TextEncoder().encode(value);

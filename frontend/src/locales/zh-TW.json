@@ -1,4 +1,16 @@
 {
+  "privacy": {
+    "title": "隱私模式",
+    "description": "隱藏帳號身分、敏感資訊和通知內容，不影響登入與下載。",
+    "hidden": "已隱藏",
+    "account": "帳號 {{number}}",
+    "notificationContent": "內容已在隱私模式下隱藏。",
+    "toast": {
+      "success": "操作成功",
+      "error": "操作失敗",
+      "info": "通知"
+    }
+  },
   "loading": "載入中...",
   "auth": {
     "title": "存取密碼",

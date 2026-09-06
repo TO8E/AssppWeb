@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useToastStore, type ToastType } from '../../store/toast';
 
 const iconBg: Record<ToastType, string> = {
@@ -70,6 +72,8 @@ const icons: Record<ToastType, ReactNode> = {
 
 export default function ToastContainer() {
   const { toasts, removeToast } = useToastStore();
+  const { privacyMode } = usePrivacy();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -108,17 +112,17 @@ export default function ToastContainer() {
             </div>
 
             <div className="min-w-0 flex-1 py-0.5">
-              {toast.title && (
+              {(toast.title || privacyMode) && (
                 <h4
                   className={`mb-0.5 text-sm font-semibold leading-5 ${titleColor[toast.type]}`}
                 >
-                  {toast.title}
+                  {privacyMode ? t(`privacy.toast.${toast.type}`) : toast.title}
                 </h4>
               )}
               <p
                 className="whitespace-pre-line break-words text-sm leading-5 text-gray-700 dark:text-gray-200"
               >
-                {toast.message}
+                {privacyMode ? t('privacy.notificationContent') : toast.message}
               </p>
             </div>
 

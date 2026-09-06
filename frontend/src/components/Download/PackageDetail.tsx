@@ -12,6 +12,7 @@ import {
   isPreviewDownloadTask,
   previewDownloadTasks,
 } from './previewTasks';
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useAccounts } from '../../hooks/useAccounts';
 import { useDownloadAction } from '../../hooks/useDownloadAction';
 import { useDownloads } from '../../hooks/useDownloads';
@@ -29,6 +30,7 @@ export default function PackageDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { mask } = usePrivacy();
   const { tasks, deleteDownload, pauseDownload, resumeDownload, hashToEmail } =
     useDownloads();
   const { accounts } = useAccounts();
@@ -63,7 +65,7 @@ export default function PackageDetail() {
     ? t('downloads.preview.account')
     : hashToEmail[task.accountHash];
   const account = accounts.find((item) => item.email === accountEmail);
-  const accountLabel = accountEmail || task.accountHash;
+  const accountLabel = mask(accountEmail || task.accountHash);
   const appName = task.software.name;
   const taskId = task.id;
   const bundleID = task.software.bundleID;
@@ -223,7 +225,7 @@ export default function PackageDetail() {
               role="alert"
               className="mt-4 min-w-0 break-words rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 [overflow-wrap:anywhere] dark:bg-red-950/30 dark:text-red-400"
             >
-              {task.error}
+              {mask(task.error)}
             </p>
           )}
         </section>

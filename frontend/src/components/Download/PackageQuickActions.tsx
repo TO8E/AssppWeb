@@ -2,6 +2,7 @@ import { type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import { isPreviewDownloadTask } from './previewTasks';
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useToastStore } from '../../store/toast';
 import { authHeaders } from '../../api/client';
 import { getInstallInfo } from '../../api/install';
@@ -19,6 +20,7 @@ export default function PackageQuickActions({
   size = 'default',
 }: PackageQuickActionsProps) {
   const { t } = useTranslation();
+  const { privacyMode } = usePrivacy();
   const addToast = useToastStore((state) => state.addToast);
 
   if (task.status !== 'completed' || !task.hasFile) return null;
@@ -140,14 +142,14 @@ export default function PackageQuickActions({
         <button
           type="button"
           onClick={handleShare}
-          aria-describedby={isPreview ? undefined : `install-qr-${task.id}`}
+          aria-describedby={isPreview || privacyMode ? undefined : `install-qr-${task.id}`}
           className={`${secondaryButton} w-full`}
           aria-label={t('downloads.package.share')}
         >
           <ShareIcon />
           <span className="truncate">{t('downloads.package.share')}</span>
         </button>
-        {!isPreview && (
+        {!isPreview && !privacyMode && (
           <div
             id={`install-qr-${task.id}`}
             role="tooltip"

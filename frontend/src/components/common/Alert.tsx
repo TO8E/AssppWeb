@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { usePrivacy } from '../../hooks/usePrivacy';
 
 const styles = {
   error:
@@ -18,11 +19,12 @@ export default function Alert({
   children: ReactNode;
   className?: string;
 }) {
+  const { privacyMode, hidden } = usePrivacy();
   return (
     <div
       className={`rounded-2xl border px-4 py-3 text-sm leading-6 [overflow-wrap:anywhere] ${styles[type]} ${className}`}
     >
-      {children}
+      {privacyMode && type === 'error' ? hidden : children}
     </div>
   );
 }

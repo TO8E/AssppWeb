@@ -1,4 +1,16 @@
 {
+  "privacy": {
+    "title": "隐私模式",
+    "description": "隐藏账号身份、敏感信息和通知内容，不影响登录与下载。",
+    "hidden": "已隐藏",
+    "account": "账号 {{number}}",
+    "notificationContent": "内容已在隐私模式下隐藏。",
+    "toast": {
+      "success": "操作成功",
+      "error": "操作失败",
+      "info": "通知"
+    }
+  },
   "loading": "加载中...",
   "auth": {
     "title": "访问密码",

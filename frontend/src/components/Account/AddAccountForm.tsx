@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
 import Spinner from "../common/Spinner";
 import SapStatus from "../common/SapStatus";
+import { usePrivacy } from '../../hooks/usePrivacy';
 import { useAccounts } from "../../hooks/useAccounts";
 import { useToastStore } from "../../store/toast";
 import { authenticate, AuthenticationError } from "../../apple/authenticate";
@@ -12,6 +13,7 @@ import { generateDeviceId } from "../../apple/config";
 
 export default function AddAccountForm() {
   const navigate = useNavigate();
+  const { privacyMode } = usePrivacy();
   const { addAccount } = useAccounts();
   const { t } = useTranslation();
   const addToast = useToastStore((s) => s.addToast);
@@ -72,12 +74,13 @@ export default function AddAccountForm() {
               </label>
               <input
                 id="email"
-                type="text"
+                type={privacyMode ? "password" : "text"}
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                placeholder={t("accounts.addForm.emailPlaceholder")}
+                placeholder={privacyMode ? undefined : t("accounts.addForm.emailPlaceholder")}
+                autoComplete={privacyMode ? "off" : "username"}
                 className={inputClassName}
               />
             </div>
@@ -110,7 +113,7 @@ export default function AddAccountForm() {
               <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                 <input
                   id="deviceId"
-                  type="text"
+                  type={privacyMode ? "password" : "text"}
                   required
                   value={deviceId}
                   onChange={(e) => setDeviceId(e.target.value)}
@@ -141,7 +144,7 @@ export default function AddAccountForm() {
                 </label>
                 <input
                   id="code"
-                  type="text"
+                  type={privacyMode ? "password" : "text"}
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={6}
