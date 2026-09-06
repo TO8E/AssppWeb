@@ -100,7 +100,16 @@
       "loading": "Loading...",
       "loadDetails": "Load details",
       "download": "Download",
-      "downloading": "Downloading..."
+      "downloading": "Downloading...",
+      "refresh": "Refresh list",
+      "total": "{{count}} versions",
+      "loadingDetails": "Loading version number…",
+      "retryDetails": "Load failed. Retry",
+      "dateUnavailable": "Release dates for historical versions are unavailable.",
+      "pagination": "Version pages",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{current}} of {{total}}"
     }
   },
   "accounts": {

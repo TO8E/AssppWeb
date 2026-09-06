@@ -100,7 +100,16 @@
       "loading": "読み込み中...",
       "loadDetails": "詳細を読み込む",
       "download": "ダウンロード",
-      "downloading": "ダウンロード中..."
+      "downloading": "ダウンロード中...",
+      "refresh": "一覧を更新",
+      "total": "{{count}} 件のバージョン",
+      "loadingDetails": "バージョン番号を読み込み中…",
+      "retryDetails": "読み込み失敗。再試行",
+      "dateUnavailable": "過去のバージョンの公開日は取得できません。",
+      "pagination": "バージョンのページ",
+      "previous": "前へ",
+      "next": "次へ",
+      "page": "{{current}} / {{total}} ページ"
     }
   },
   "accounts": {

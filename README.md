@@ -8,6 +8,8 @@ Existing Compose deployments can use the [separate build, activation and rollbac
 
 Enable **Privacy mode** in Settings to replace account identities with numbered labels and hide account fields, sensitive input text, notification contents, server information and install QR tooltips. The preference survives page reloads. Privacy-mode account detail links omit email addresses. This changes the displayed information; stored credentials, Apple requests and encrypted account exports retain their original data.
 
+Version History loads the list automatically and resolves version numbers sequentially for the current page (20 entries). Successful labels are cached in the browser by app and storefront, with up to 1,000 entries and no account credentials. Failed lookups can be retried individually. The store metadata's `releaseDate` is the app's original release date; it is not displayed as a historical version's publication date.
+
 SAP initialization runs in the browser and can take roughly two minutes in Chrome on the upstream test machine. Components are cached, but refreshing the page or changing account device identifiers requires a new signer. See the [SAP implementation notes](frontend/src/apple/sap/README.md) for measurement limitations.
 
 ![preview](./resources/preview.png)

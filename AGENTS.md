@@ -74,6 +74,7 @@ The server is a blind TCP proxy. It NEVER sees Apple credentials.
 - The browser signs the exact login plist bytes with SAP and sends `X-Apple-ActionSignature` to Apple. A Web Worker runs the signer; initialization is reused for the current device identifier only while the page remains loaded.
 - `/api/sap/*` serves verified public Apple binaries and proxies the public setup certificate and non-credential setup exchange. This is an additional server role alongside the bag proxy. Credential-bearing Apple requests still terminate TLS in the browser.
 - `shouldRetryRedownload()` handles both failure type 5002 and HTTP-success responses with status 0 and an explicitly empty `songList`. Version lists, version details and download information retry only once; explicit authentication/license errors remain errors.
+- Historical store metadata's `releaseDate` is the app's original release date, not the requested version's publication date. `VersionMetadata` intentionally contains only the display version. Resolve visible pages sequentially and cache only public version labels, scoped to app and storefront; never persist account credentials in the metadata cache.
 - SAP progress UI uses the shared `SapStatus` component. Do not place it inside a fixed action-button grid.
 - Keep mocked test coverage distinct from actual browser authentication, downloaded IPA, and device-install validation.
 

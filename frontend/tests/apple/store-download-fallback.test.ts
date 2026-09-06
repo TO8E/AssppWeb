@@ -39,6 +39,17 @@ const operations = [
   { name: 'download info', run: () => getDownloadInfo(account, app, '101'), hasVersion: true },
 ];
 
+describe('historical version metadata', () => {
+  beforeEach(() => vi.resetAllMocks());
+
+  it.each(['2011-09-08T22:19:39Z', undefined, 'invalid-date'])('loads the version number independently of the app release date: %s', async (releaseDate) => {
+    const metadata = { bundleShortVersionString: '16.25.1', ...(releaseDate === undefined ? {} : { releaseDate }) };
+    vi.mocked(appleRequest).mockResolvedValueOnce(response({ status: 0, songList: [{ metadata }] }));
+    const result = await getVersionMetadata(account, app, '101');
+    expect(result.metadata).toEqual({ displayVersion: '16.25.1' });
+  });
+});
+
 for (const operation of operations) {
   describe(`${operation.name} fallback`, () => {
     beforeEach(() => vi.resetAllMocks());

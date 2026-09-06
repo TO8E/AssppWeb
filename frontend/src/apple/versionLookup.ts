@@ -92,19 +92,11 @@ export async function getVersionMetadata(
       throw new Error("Missing bundleShortVersionString");
     }
 
-    const rawReleaseDate = itemMetadata.releaseDate;
-    if (!rawReleaseDate) {
-      throw new Error("Missing releaseDate");
-    }
-    const releaseDate =
-      rawReleaseDate instanceof Date
-        ? rawReleaseDate.toISOString()
-        : String(rawReleaseDate);
-
+    // releaseDate describes the app's original release, not this historical build.
+    // This endpoint does not provide a reliable per-version publication date.
     return {
       metadata: {
         displayVersion: bundleShortVersionString,
-        releaseDate,
       },
       updatedCookies: cookies,
     };

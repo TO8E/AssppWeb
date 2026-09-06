@@ -100,7 +100,16 @@
       "loading": "Загрузка...",
       "loadDetails": "Загрузить детали",
       "download": "Загрузить",
-      "downloading": "Загрузка..."
+      "downloading": "Загрузка...",
+      "refresh": "Обновить список",
+      "total": "Версий: {{count}}",
+      "loadingDetails": "Загрузка номера версии…",
+      "retryDetails": "Ошибка загрузки. Повторить",
+      "dateUnavailable": "Даты выпуска предыдущих версий недоступны.",
+      "pagination": "Страницы версий",
+      "previous": "Назад",
+      "next": "Далее",
+      "page": "Страница {{current}} из {{total}}"
     }
   },
   "accounts": {
