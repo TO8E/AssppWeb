@@ -4,16 +4,16 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN npm run build
+RUN npm test && npm run build
 
 # Stage 2: Build backend
 FROM node:20-alpine AS backend-build
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ zip
 WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm ci
 COPY backend/ ./
-RUN npm run build
+RUN npm test && npm run build
 
 # Stage 3: Runtime
 FROM node:20-alpine
