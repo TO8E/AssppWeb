@@ -1,9 +1,8 @@
-import { type MouseEvent, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import ActionGroup from '../common/ActionGroup';
 import Button, { buttonClass } from '../common/Button';
-import { isPreviewDownloadTask } from './previewTasks';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import { useToastStore } from '../../store/toast';
 import { authHeaders } from '../../api/client';
@@ -29,23 +28,8 @@ export default function PackageQuickActions({
   if (task.status !== 'completed' || !task.hasFile) return children ? <ActionGroup>{children}</ActionGroup> : null;
 
   const installInfo = getInstallInfo(task.id);
-  const isPreview = isPreviewDownloadTask(task);
 
-
-  function showPreviewNotice() {
-    addToast(
-      t('downloads.preview.actionHint'),
-      'info',
-      t('downloads.preview.badge'),
-    );
-  }
-
-  function handleInstall(event: MouseEvent<HTMLAnchorElement>) {
-    if (isPreview) {
-      event.preventDefault();
-      showPreviewNotice();
-      return;
-    }
+  function handleInstall() {
 
     addToast(
       task.software.name,
@@ -55,10 +39,6 @@ export default function PackageQuickActions({
   }
 
   async function handleShare() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
 
     try {
       await copyText(installInfo.installUrl);
@@ -85,10 +65,6 @@ export default function PackageQuickActions({
   }
 
   async function handleDownload() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
 
     addToast(
       task.software.name,
@@ -140,14 +116,14 @@ export default function PackageQuickActions({
         <Button
           type="button"
           onClick={handleShare}
-          aria-describedby={isPreview || privacyMode ? undefined : `install-qr-${task.id}`}
+          aria-describedby={privacyMode ? undefined : `install-qr-${task.id}`}
           className="w-full"
           aria-label={t('downloads.package.share')}
         >
           <ShareIcon />
           <span className="truncate">{t('downloads.package.share')}</span>
         </Button>
-        {!isPreview && !privacyMode && (
+        {!privacyMode && (
           <div
             id={`install-qr-${task.id}`}
             role="tooltip"

@@ -70,9 +70,6 @@
     "free": "Free",
     "product": {
       "title": "App Details",
-      "previewBadge": "Interactive Preview",
-      "previewDescription": "This app and account are fictional. Actions will not contact Apple or create real tasks.",
-      "previewActionComplete": "Simulated action completed. No real data was changed.",
       "notFound": "Could not find the requested app.",
       "licenseSuccess": "License acquired successfully",
       "purchaseFailed": "Purchase failed",
@@ -199,12 +196,6 @@
       "completed": "Completed",
       "failed": "Failed",
       "injecting": "Injecting"
-    },
-    "preview": {
-      "badge": "Preview",
-      "description": "Sample packages are shown for design preview only.",
-      "actionHint": "Preview actions do not affect real downloads.",
-      "account": "Preview account"
     },
     "item": {
       "viewPackage": "View Package"

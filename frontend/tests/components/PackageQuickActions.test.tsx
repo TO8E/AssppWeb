@@ -2,7 +2,6 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PackageQuickActions from '../../src/components/Download/PackageQuickActions';
-import { previewDownloadTasks } from '../../src/components/Download/previewTasks';
 import { useToastStore } from '../../src/store/toast';
 import type { DownloadTask } from '../../src/types';
 
@@ -120,47 +119,6 @@ describe('PackageQuickActions', () => {
     render(<PackageQuickActions task={createTask({ status })} />);
 
     expect(screen.queryByTestId('package-quick-actions')).not.toBeInTheDocument();
-  });
-
-  it('keeps all preview actions local and shows a notice for each click', async () => {
-    const user = userEvent.setup();
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
-    const clipboardWrite = vi.fn().mockResolvedValue(undefined);
-    const nativeShare = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText: clipboardWrite },
-    });
-    Object.defineProperty(navigator, 'share', {
-      configurable: true,
-      value: nativeShare,
-    });
-
-    render(<PackageQuickActions task={previewDownloadTasks[0]} />);
-
-    await user.click(
-      screen.getByRole('link', { name: 'downloads.package.install' }),
-    );
-    await user.click(
-      screen.getByRole('button', { name: 'downloads.package.share' }),
-    );
-    await user.click(
-      screen.getByRole('button', { name: 'downloads.package.downloadIpa' }),
-    );
-
-    expect(fetchSpy).not.toHaveBeenCalled();
-    expect(clipboardWrite).not.toHaveBeenCalled();
-    expect(nativeShare).not.toHaveBeenCalled();
-    expect(useToastStore.getState().toasts).toHaveLength(3);
-    expect(useToastStore.getState().toasts).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          message: 'downloads.preview.actionHint',
-          title: 'downloads.preview.badge',
-          type: 'info',
-        }),
-      ]),
-    );
   });
 
   it('downloads a real package through the authenticated API as a blob', async () => {

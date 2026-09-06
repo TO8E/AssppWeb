@@ -7,13 +7,10 @@ import Button, { buttonClass } from '../common/Button';
 import Section, { InfoRow } from '../common/Section';
 import SoftwareHeader from '../common/SoftwareHeader';
 import AccountSelect from '../common/AccountSelect';
-import Alert from '../common/Alert';
 import Spinner from '../common/Spinner';
 import SapStatus from '../common/SapStatus';
-import { isProductPreviewEnabled, previewProductAccounts, previewProductApp } from './productPreview';
 import { useAccounts } from '../../hooks/useAccounts';
 import { useDownloadAction } from '../../hooks/useDownloadAction';
-import { useToastStore } from '../../store/toast';
 import { lookupApp } from '../../api/search';
 import { storeIdToCountry } from '../../apple/config';
 import type { Software } from '../../types';
@@ -23,7 +20,6 @@ export default function ProductDetail() {
   const location = useLocation();
   const { accounts } = useAccounts();
   const { t } = useTranslation();
-  const addToast = useToastStore((state) => state.addToast);
   const {
     startDownload,
     acquireLicense,
@@ -31,14 +27,12 @@ export default function ProductDetail() {
     toastLicenseError,
   } = useDownloadAction();
 
-  const previewEnabled = isProductPreviewEnabled(location.search);
-  const productAccounts = previewEnabled ? previewProductAccounts : accounts;
   const routeState = location.state as {
     app?: Software;
     country?: string;
   } | null;
-  const stateApp = previewEnabled ? previewProductApp : routeState?.app;
-  const stateCountry = previewEnabled ? 'US' : routeState?.country;
+  const stateApp = routeState?.app;
+  const stateCountry = routeState?.country;
   const [country] = useState(stateCountry ?? "US");
   const [app, setApp] = useState<Software | null>(stateApp ?? null);
   const [loading, setLoading] = useState(!stateApp);
@@ -49,8 +43,8 @@ export default function ProductDetail() {
 
   const filteredAccounts = useMemo(
     () =>
-      productAccounts.filter((a) => storeIdToCountry(a.store) === country),
-    [productAccounts, country],
+      accounts.filter((a) => storeIdToCountry(a.store) === country),
+    [accounts, country],
   );
 
   const account = filteredAccounts.find((a) => a.email === selectedAccount);
@@ -99,15 +93,6 @@ export default function ProductDetail() {
     if (!account || !app) return;
     setLoadingAction("purchase");
     try {
-      if (previewEnabled) {
-        await waitForPreviewAction();
-        addToast(
-          t('search.product.previewActionComplete'),
-          'success',
-          t('search.product.previewBadge'),
-        );
-        return;
-      }
       await acquireLicense(account, app);
     } catch (e) {
       toastLicenseError(account, app, e);
@@ -120,15 +105,6 @@ export default function ProductDetail() {
     if (!account || !app) return;
     setLoadingAction("download");
     try {
-      if (previewEnabled) {
-        await waitForPreviewAction();
-        addToast(
-          t('search.product.previewActionComplete'),
-          'success',
-          t('search.product.previewBadge'),
-        );
-        return;
-      }
       await startDownload(account, app);
     } catch (e) {
       toastDownloadError(account, app, e);
@@ -140,14 +116,6 @@ export default function ProductDetail() {
   return (
     <PageContainer title={t("search.product.title")} back={{ to: "/search", label: t('nav.backTo', { page: t('nav.search') }) }}>
       <div className="min-w-0 [overflow-wrap:anywhere]">
-        {previewEnabled && (
-          <Alert type="warning">
-            <span className="font-semibold">
-              {t('search.product.previewBadge')}
-            </span>{' '}
-            {t('search.product.previewDescription')}
-          </Alert>
-        )}
 
         <Section>
           <SoftwareHeader app={app}>
@@ -158,7 +126,7 @@ export default function ProductDetail() {
           </SoftwareHeader>
         </Section>
 
-        {productAccounts.length === 0 ? (
+        {accounts.length === 0 ? (
           <div className="rounded-2xl bg-yellow-50 p-4 text-sm text-yellow-800 ring-1 ring-yellow-200/70 dark:bg-yellow-950/30 dark:text-yellow-300 dark:ring-yellow-800/50">
             <Link to="/accounts/add" className="font-medium underline">
               {t("search.product.addAccountLink")}
@@ -301,10 +269,4 @@ function DownloadIcon() {
       />
     </svg>
   );
-}
-
-function waitForPreviewAction(): Promise<void> {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, 2000);
-  });
 }

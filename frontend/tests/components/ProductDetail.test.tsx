@@ -115,18 +115,6 @@ function renderProductDetail(onRender?: () => void) {
   );
 }
 
-function renderProductPreview() {
-  return render(
-    <MemoryRouter
-      initialEntries={['/search/preview?preview=product']}
-    >
-      <Routes>
-        <Route path="/search/:appId" element={<ProductDetail />} />
-      </Routes>
-    </MemoryRouter>,
-  );
-}
-
 describe('ProductDetail download action', () => {
   beforeEach(() => {
     mocks.accounts = [account];
@@ -271,63 +259,14 @@ describe('ProductDetail download action', () => {
     }
   });
 
-  it('simulates a preview download without calling real services', async () => {
-    vi.useFakeTimers();
-    mocks.accounts = [];
-
-    renderProductPreview();
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(
-      screen.getByRole('heading', { name: 'Signal Canvas' }),
-    ).toBeInTheDocument();
-    const accountSelect = screen.getByRole('combobox');
-    expect(accountSelect).toHaveValue('developer@preview.asspp.invalid');
-    const downloadButton = screen.getByRole('button', {
-      name: 'search.product.download',
-    });
-    expect(downloadButton).toBeEnabled();
-    expect(useToastStore.getState().toasts).toHaveLength(0);
-
-    fireEvent.click(downloadButton);
-
-    expect(downloadButton).toBeDisabled();
-    expect(downloadButton).toHaveAttribute('aria-busy', 'true');
-    expect(downloadButton.querySelector('.animate-spin')).toBeInTheDocument();
-    expect(mocks.lookupApp).not.toHaveBeenCalled();
+  it('ignores the retired preview query and loads the requested app', async () => {
+    mocks.lookupApp.mockResolvedValue(app);
+    render(<MemoryRouter initialEntries={['/search/123456?preview=product']}><Routes>
+      <Route path="/search/:appId" element={<ProductDetail />} />
+    </Routes></MemoryRouter>);
+    await screen.findByRole('heading', { name: app.name });
+    expect(mocks.lookupApp).toHaveBeenCalledWith('123456', 'US');
+    expect(screen.getByRole('combobox')).toHaveValue(account.email);
     expect(mocks.startDownload).not.toHaveBeenCalled();
-    expect(mocks.acquireLicense).not.toHaveBeenCalled();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(1000);
-    });
-
-    expect(downloadButton).toBeDisabled();
-    expect(downloadButton).toHaveAttribute('aria-busy', 'true');
-    expect(downloadButton.querySelector('.animate-spin')).toBeInTheDocument();
-    expect(useToastStore.getState().toasts).toHaveLength(0);
-    expect(mocks.lookupApp).not.toHaveBeenCalled();
-    expect(mocks.startDownload).not.toHaveBeenCalled();
-    expect(mocks.acquireLicense).not.toHaveBeenCalled();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(1100);
-    });
-
-    expect(downloadButton).toBeEnabled();
-    expect(downloadButton).toHaveAttribute('aria-busy', 'false');
-    expect(downloadButton.querySelector('.animate-spin')).not.toBeInTheDocument();
-    expect(mocks.lookupApp).not.toHaveBeenCalled();
-    expect(mocks.startDownload).not.toHaveBeenCalled();
-    expect(mocks.acquireLicense).not.toHaveBeenCalled();
-    expect(useToastStore.getState().toasts).toEqual([
-      expect.objectContaining({
-        message: 'search.product.previewActionComplete',
-        title: 'search.product.previewBadge',
-        type: 'success',
-      }),
-    ]);
   });
 });

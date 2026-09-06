@@ -11,7 +11,6 @@ import type { DownloadTask } from '../../types';
 
 interface DownloadItemProps {
   task: DownloadTask;
-  preview?: boolean;
   onPause: (id: string) => void;
   onResume: (id: string) => void;
   onDelete: (id: string) => void;
@@ -19,7 +18,6 @@ interface DownloadItemProps {
 
 export default function DownloadItem({
   task,
-  preview = false,
   onPause,
   onResume,
   onDelete,
@@ -29,9 +27,7 @@ export default function DownloadItem({
 
   const isActive = task.status === 'downloading' || task.status === 'injecting';
   const isPaused = task.status === 'paused';
-  const detailsHref = `/downloads/${task.id}${
-    preview ? '?preview=downloads' : ''
-  }`;
+  const detailsHref = `/downloads/${task.id}`;
 
   return (
     <article className="min-w-0 px-1 py-5">

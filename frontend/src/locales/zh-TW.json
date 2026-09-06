@@ -68,9 +68,6 @@
     "free": "免費",
     "product": {
       "title": "應用程式詳情",
-      "previewBadge": "互動預覽",
-      "previewDescription": "這是虛構的應用程式與帳號；操作不會連線至 Apple，也不會建立實際任務。",
-      "previewActionComplete": "模擬操作已完成，未變更任何實際資料。",
       "notFound": "找不到請求的應用程式。",
       "licenseSuccess": "授權獲取成功",
       "purchaseFailed": "購買失敗",
@@ -197,12 +194,6 @@
       "completed": "已完成",
       "failed": "已失敗",
       "injecting": "注入中"
-    },
-    "preview": {
-      "badge": "預覽",
-      "description": "目前顯示的是僅供介面預覽的模擬安裝包。",
-      "actionHint": "預覽操作不會影響實際下載。",
-      "account": "預覽帳號"
     },
     "item": {
       "viewPackage": "查看安裝包"

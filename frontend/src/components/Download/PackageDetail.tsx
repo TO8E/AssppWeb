@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PageContainer from '../Layout/PageContainer';
 import Button from '../common/Button';
@@ -10,7 +10,6 @@ import Badge from '../common/Badge';
 import Modal from '../common/Modal';
 import ProgressBar from '../common/ProgressBar';
 import PackageQuickActions from './PackageQuickActions';
-import { isDownloadPreviewEnabled, isPreviewDownloadTask, previewDownloadTasks } from './previewTasks';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import { useAccounts } from '../../hooks/useAccounts';
 import { useDownloadAction } from '../../hooks/useDownloadAction';
@@ -26,7 +25,6 @@ import type { Software } from '../../types';
 
 export default function PackageDetail() {
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { mask } = usePrivacy();
@@ -42,9 +40,7 @@ export default function PackageDetail() {
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
   const [selectedVersion, setSelectedVersion] = useState('');
 
-  const previewEnabled = isDownloadPreviewEnabled(location.search);
-  const taskPool = previewEnabled ? previewDownloadTasks : tasks;
-  const task = taskPool.find((item) => item.id === id);
+  const task = tasks.find((item) => item.id === id);
 
   if (!task) {
     return (
@@ -59,10 +55,7 @@ export default function PackageDetail() {
   const isActive = task.status === 'downloading' || task.status === 'injecting';
   const isPaused = task.status === 'paused';
   const isCompleted = task.status === 'completed';
-  const isPreview = isPreviewDownloadTask(task);
-  const accountEmail = isPreview
-    ? t('downloads.preview.account')
-    : hashToEmail[task.accountHash];
+  const accountEmail = hashToEmail[task.accountHash];
   const account = accounts.find((item) => item.email === accountEmail);
   const accountLabel = mask(accountEmail || task.accountHash);
   const appName = task.software.name;
@@ -70,19 +63,7 @@ export default function PackageDetail() {
   const bundleID = task.software.bundleID;
   const currentVersion = task.software.version;
 
-  function showPreviewNotice() {
-    addToast(
-      t('downloads.preview.actionHint'),
-      'info',
-      t('downloads.preview.badge'),
-    );
-  }
-
   async function handleDelete() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
     if (!confirm(t('downloads.package.deleteConfirm'))) return;
 
     await deleteDownload(taskId);
@@ -96,26 +77,14 @@ export default function PackageDetail() {
   }
 
   function handlePause() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
     pauseDownload(taskId);
   }
 
   function handleResume() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
     resumeDownload(taskId);
   }
 
   async function handleCheckUpdate() {
-    if (isPreview) {
-      showPreviewNotice();
-      return;
-    }
     if (!account) return;
 
     setCheckingUpdate(true);
@@ -162,16 +131,6 @@ export default function PackageDetail() {
   return (
     <PageContainer back={{ to: "/downloads", label: t('nav.backTo', { page: t('nav.downloads') }) }} title={t('downloads.package.title')}>
       <div className="min-w-0">
-        {isPreview && (
-          <div className="flex min-w-0 items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-3 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300">
-            <span className="mt-0.5 inline-flex h-5 shrink-0 items-center rounded-full bg-blue-600 px-2 text-[10px] font-semibold uppercase tracking-wide text-white">
-              {t('downloads.preview.badge')}
-            </span>
-            <p className="min-w-0 leading-5">
-              {t('downloads.preview.description')}
-            </p>
-          </div>
-        )}
 
         <Section className="min-w-0">
           <SoftwareHeader app={task.software}>
@@ -290,7 +249,7 @@ export default function PackageDetail() {
               <Button
                 type="button"
                 onClick={handleCheckUpdate}
-                disabled={checkingUpdate || (!account && !isPreview)}
+                disabled={checkingUpdate || !account}
                 variant="secondary" className="min-w-0"
               >
                 {checkingUpdate
