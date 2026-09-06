@@ -16,9 +16,9 @@ const surfaceClassName =
   'shrink-0 rounded-[22%] ring-1 ring-black/5 dark:ring-white/10';
 
 export default function AppIcon({ url, name, size = 'md' }: AppIconProps) {
-  const [failed, setFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string>();
 
-  if (!url || failed) {
+  if (!url || failedUrl === url) {
     return (
       <div
         className={`${sizeClasses[size]} ${surfaceClassName} flex items-center justify-center bg-blue-600 text-white`}
@@ -37,7 +37,7 @@ export default function AppIcon({ url, name, size = 'md' }: AppIconProps) {
       src={url}
       alt={name}
       className={`${sizeClasses[size]} ${surfaceClassName} object-cover`}
-      onError={() => setFailed(true)}
+      onError={() => setFailedUrl(url)}
       draggable={false}
     />
   );
