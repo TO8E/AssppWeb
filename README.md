@@ -2,6 +2,12 @@
 
 A web-based tool for acquiring and installing iOS apps outside the App Store. Authenticate with your Apple ID, search for apps, acquire licenses, and install IPAs directly to your device.
 
+This fork is maintained at [TO8E/AssppWeb](https://github.com/TO8E/AssppWeb), based on [Lakr233/AssppWeb](https://github.com/Lakr233/AssppWeb). It includes browser-side SAP authentication from [upstream PR #88](https://github.com/Lakr233/AssppWeb/pull/88) and a one-time redownload fallback when the primary endpoint returns a successful but empty app list.
+
+Existing Compose deployments can use the [separate build, activation and rollback scripts](tools/compose-update/README.md). Export browser accounts before switching versions. The scripts preserve the original Compose settings and do not reauthenticate Apple accounts.
+
+SAP initialization runs in the browser and can take roughly two minutes in Chrome on the upstream test machine. Components are cached, but refreshing the page or changing account device identifiers requires a new signer. See the [SAP implementation notes](frontend/src/apple/sap/README.md) for measurement limitations.
+
 ![preview](./resources/preview.png)
 
 ## Zero-Trust Architecture
@@ -16,9 +22,9 @@ AssppWeb uses a zero-trust design where the server **never sees your Apple crede
 
 ### Deploy to Cloudflare
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Lakr233/AssppWeb&apiTokenTmpl=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22write%22%7D%2C%7B%22key%22%3A%22containers%22%2C%22type%22%3A%22write%22%7D%2C%7B%22key%22%3A%22cloudchamber%22%2C%22type%22%3A%22write%22%7D%5D&apiTokenName=AssppWeb%20Deploy)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/TO8E/AssppWeb&apiTokenTmpl=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22write%22%7D%2C%7B%22key%22%3A%22containers%22%2C%22type%22%3A%22write%22%7D%2C%7B%22key%22%3A%22cloudchamber%22%2C%22type%22%3A%22write%22%7D%5D&apiTokenName=AssppWeb%20Deploy)
 
-This uses Cloudflare Workers + Containers with the published image `ghcr.io/lakr233/assppweb:latest`.
+This builds the fork from its Dockerfile using Cloudflare Workers + Containers.
 
 Requirements:
 
@@ -35,7 +41,7 @@ If your build log fails at `Deploy a container application` with `Unauthorized`,
 <details>
 <summary>Click to show Railway deployment instructions</summary>
 
-1. Go to [railway.com/new/image](https://railway.com/new/image) → enter `ghcr.io/lakr233/assppweb:latest`
+1. Go to [railway.com/new/image](https://railway.com/new/image) → enter `ghcr.io/to8e/assppweb:latest`
 2. In service **Settings**, set **Healthcheck Path** to `/api/settings` and deploy
 3. Right-click the service → **Attach volume** → mount path: `/data`
 4. In **Variables**, set `DATA_DIR` = `/data` and deploy
@@ -59,7 +65,7 @@ If your build log fails at `Deploy a container application` with `Unauthorized`,
 **Setup Docker Compose**
 
 ```bash
-curl -O https://raw.githubusercontent.com/Lakr233/AssppWeb/main/compose.yml
+curl -O https://raw.githubusercontent.com/TO8E/AssppWeb/main/compose.yml
 docker compose up -d
 ```
 

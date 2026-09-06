@@ -59,6 +59,22 @@ The server is a blind TCP proxy. It NEVER sees Apple credentials.
 
 ## Reference Implementation
 
+### Fork Maintenance
+
+- Maintained repository: `TO8E/AssppWeb`; original upstream: `Lakr233/AssppWeb`.
+- Default deployment image: `ghcr.io/to8e/assppweb:latest`.
+- Preserve upstream authorship and commit provenance when incorporating patches.
+- Keep account storage compatible. Accounts and Apple credentials live in the browser's `asspp-accounts` IndexedDB database, not in the server data directory. Container rollback does not restore browser data or revive Apple-invalidated tokens.
+- `tools/compose-update/build.sh` builds this checkout and generates a separate activation script with rollback. Validate these helpers with `python3 tools/compose-update/tests/test_update.py`.
+
+### SAP Authentication and Store Fallbacks
+
+- The browser signs the exact login plist bytes with SAP and sends `X-Apple-ActionSignature` to Apple. A Web Worker runs the signer; initialization is reused for the current device identifier only while the page remains loaded.
+- `/api/sap/*` serves verified public Apple binaries and proxies the public setup certificate and non-credential setup exchange. This is an additional server role alongside the bag proxy. Credential-bearing Apple requests still terminate TLS in the browser.
+- `shouldRetryRedownload()` handles both failure type 5002 and HTTP-success responses with status 0 and an explicitly empty `songList`. Version lists, version details and download information retry only once; explicit authentication/license errors remain errors.
+- SAP progress UI uses the shared `SapStatus` component. Do not place it inside a fixed action-button grid.
+- Keep mocked test coverage distinct from actual browser authentication, downloaded IPA, and device-install validation.
+
 The Swift reference at `references/ApplePackage/` is the source of truth for Apple protocol behavior:
 
 - Field mappings (iTunes API → Software type) use Swift `CodingKeys`
