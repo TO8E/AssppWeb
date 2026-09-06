@@ -131,9 +131,6 @@ function VersionList({ app, account, updateAccount, downloadingVersion, onDownlo
       )}
       {history.versions.length > 0 && (
         <>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {t('search.versions.dateUnavailable')}
-          </p>
           <div className="min-w-0 divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900">
             {history.visibleVersions.map((versionId) => {
               const meta = history.metadata[versionId];

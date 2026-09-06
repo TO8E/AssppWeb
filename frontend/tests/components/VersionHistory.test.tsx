@@ -78,7 +78,6 @@ describe('VersionHistory automatic version labels', () => {
     expect(getVersionMetadata).toHaveBeenCalledTimes(3);
     expect(screen.queryByText(/2011/)).not.toBeInTheDocument();
     expect(screen.queryByText('search.versions.loadDetails')).not.toBeInTheDocument();
-    expect(screen.getByText('search.versions.dateUnavailable')).toBeInTheDocument();
     expect(useAccountsStore.getState().updateAccount).not.toHaveBeenCalled();
   });
 
