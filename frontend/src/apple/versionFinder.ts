@@ -3,7 +3,7 @@ import { appleRequest } from "./request";
 import { buildPlist, parsePlist } from "./plist";
 import { extractAndMergeCookies } from "./cookies";
 import {
-  RETRYABLE_FAILURE_TYPE,
+  shouldRetryRedownload,
   redownloadEndpoint,
   volumeStoreEndpoint,
 } from "./config";
@@ -61,21 +61,19 @@ export async function listVersions(
 
     const dict = parsePlist(response.body) as Record<string, any>;
 
+    if (!triedRedownload && shouldRetryRedownload(response.status, dict)) {
+      triedRedownload = true;
+      endpoint = redownloadEndpoint(deviceId);
+      requestHost = endpoint.host;
+      requestPath = endpoint.path;
+      redirectAttempt = 0;
+      continue;
+    }
+
     const songList = dict.songList as Record<string, any>[] | undefined;
     if (!songList || songList.length === 0) {
       if (dict.failureType) {
         const failureType = String(dict.failureType);
-
-        // volumeStore intermittently returns 5002; retry once via the
-        // redownload dispatch endpoint, which serves the same payload.
-        if (failureType === RETRYABLE_FAILURE_TYPE && !triedRedownload) {
-          triedRedownload = true;
-          endpoint = redownloadEndpoint(deviceId);
-          requestHost = endpoint.host;
-          requestPath = endpoint.path;
-          redirectAttempt = 0;
-          continue;
-        }
 
         switch (failureType) {
           case "2034":

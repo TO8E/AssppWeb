@@ -157,6 +157,26 @@ export function storeAPIHost(pod?: string): string {
 // differently in the request payload.
 export const RETRYABLE_FAILURE_TYPE = "5002";
 
+export function shouldRetryRedownload(
+  httpStatus: number,
+  response: Record<string, unknown>,
+): boolean {
+  if (String(response.failureType ?? '') === RETRYABLE_FAILURE_TYPE) {
+    return true;
+  }
+
+  // Some apps return purchaseSuccess/status 0 but an empty songList from
+  // volumeStore. The redownload endpoint can still return their metadata.
+  return (
+    httpStatus >= 200 &&
+    httpStatus < 300 &&
+    !response.failureType &&
+    String(response.status) === '0' &&
+    Array.isArray(response.songList) &&
+    response.songList.length === 0
+  );
+}
+
 export interface StoreDownloadEndpoint {
   host: string;
   path: string;

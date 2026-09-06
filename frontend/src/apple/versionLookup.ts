@@ -3,7 +3,7 @@ import { appleRequest } from "./request";
 import { buildPlist, parsePlist } from "./plist";
 import { extractAndMergeCookies } from "./cookies";
 import {
-  RETRYABLE_FAILURE_TYPE,
+  shouldRetryRedownload,
   redownloadEndpoint,
   volumeStoreEndpoint,
 } from "./config";
@@ -66,12 +66,7 @@ export async function getVersionMetadata(
 
     const dict = parsePlist(response.body) as Record<string, any>;
 
-    // volumeStore intermittently returns 5002; retry once via the redownload
-    // dispatch endpoint, which serves the same payload.
-    if (
-      String(dict.failureType ?? "") === RETRYABLE_FAILURE_TYPE &&
-      !triedRedownload
-    ) {
+    if (!triedRedownload && shouldRetryRedownload(response.status, dict)) {
       triedRedownload = true;
       endpoint = redownloadEndpoint(deviceId);
       requestHost = endpoint.host;
