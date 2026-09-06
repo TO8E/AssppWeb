@@ -96,7 +96,12 @@ html.dark body {
 
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline: 2px solid var(--color-blue-500);
-    outline-offset: 3px;
+    outline-offset: 2px;
+  }
+
+  /* Form controls share a single, close-fitting focus outline. */
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline-offset: 0;
   }
 
   svg {
@@ -195,4 +200,94 @@ html.dark ::selection {
 @utility ios-scroll {
   touch-action: pan-y pinch-zoom;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Shared controls and content rhythm. Page components only supply layout. */
+@layer components {
+  .ui-button {
+    display: inline-flex;
+    min-height: 2.75rem;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    overflow-wrap: anywhere;
+    transition: background-color 120ms, color 120ms;
+  }
+  .ui-button:disabled { opacity: 0.45; }
+  .ui-button--primary { background: var(--color-blue-600); color: white; }
+  .ui-button--primary:hover:not(:disabled) { background: var(--color-blue-700); }
+  .ui-button--secondary { background: var(--color-gray-50); color: var(--color-gray-700); }
+  .ui-button--secondary:hover:not(:disabled) { background: var(--color-gray-100); }
+  .ui-button--plain { padding-inline: 0; background: transparent; color: var(--color-blue-600); }
+  .ui-button--plain:hover:not(:disabled) { background: var(--color-blue-50); }
+  .ui-button--danger { color: var(--color-red-600); background: var(--color-red-50); }
+  .ui-button--danger:hover:not(:disabled) { background: var(--color-red-100); }
+  .ui-button--danger-solid { color: white; background: var(--color-red-600); }
+  .ui-button--danger-solid:hover:not(:disabled) { background: var(--color-red-700); }
+  .dark .ui-button--secondary { background: var(--color-gray-800); color: var(--color-gray-100); }
+  .dark .ui-button--secondary:hover:not(:disabled) { background: var(--color-gray-700); }
+  .dark .ui-button--plain { color: var(--color-blue-400); }
+  .dark .ui-button--plain:hover:not(:disabled) { background: var(--color-blue-950); }
+  .dark .ui-button--danger { color: var(--color-red-400); background: color-mix(in srgb, var(--color-red-950) 50%, var(--color-gray-900)); }
+  .dark .ui-button--danger:hover:not(:disabled) { background: var(--color-red-950); }
+  .ui-control {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-900);
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .ui-control::placeholder { color: var(--color-gray-400); opacity: 1; }
+  .ui-control:disabled { opacity: 0.5; cursor: not-allowed; }
+  .dark .ui-control { background-color: var(--color-gray-800); color: white; }
+  .ui-search-field { display: flex; min-width: 0; align-items: start; gap: 0.5rem; }
+  .ui-section { min-width: 0; padding-block: 1.5rem; border-bottom: 1px solid var(--color-gray-100); }
+  .ui-section:first-child { padding-top: 0; }
+  .ui-section:last-child { border-bottom: 0; }
+  .dark .ui-section { border-color: var(--color-gray-800); }
+  .ui-section-title { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+  .ui-section > .ui-section-title { margin-bottom: 1rem; }
+  .ui-info-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; padding-block: 0.75rem; border-bottom: 1px solid var(--color-gray-100); font-size: 0.875rem; line-height: 1.5; }
+  .ui-info-row:last-child { border-bottom: 0; }
+  .ui-info-row dt { color: var(--color-gray-500); overflow-wrap: anywhere; }
+  .ui-info-row dd { min-width: 0; text-align: right; overflow-wrap: anywhere; white-space: pre-wrap; }
+  .dark .ui-info-row { border-color: var(--color-gray-800); }
+  .dark .ui-info-row dt { color: var(--color-gray-400); }
+  .ui-action-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+  .ui-action-row > .ui-button { flex: 0 1 auto; }
+  .ui-list { border-block: 1px solid var(--color-gray-100); }
+  .ui-list > * + * { border-top: 1px solid var(--color-gray-100); }
+  .dark .ui-list, .dark .ui-list > * + * { border-color: var(--color-gray-800); }
+  .ui-list-row { display: flex; min-width: 0; align-items: center; gap: 0.75rem; padding: 1rem; }
+  a.ui-list-row:hover { background: var(--color-gray-50); }
+  .dark a.ui-list-row:hover { background: var(--color-gray-800); }
+}
+
+@layer components {
+  .ui-filter { min-height: 2.75rem; padding: 0.5rem 0.75rem; border-bottom: 2px solid transparent; font-size: 0.875rem; color: var(--color-gray-500); }
+  .ui-filter:hover { background: var(--color-gray-50); }
+  .ui-filter--active { border-color: var(--color-blue-600); color: var(--color-blue-600); font-weight: 500; }
+  .dark .ui-filter { color: var(--color-gray-400); }
+  .dark .ui-filter:hover { background: var(--color-gray-800); }
+  .dark .ui-filter--active { color: var(--color-blue-400); border-color: var(--color-blue-400); }
+}
+
+@layer components {
+  .ui-empty-state { display: flex; min-width: 0; flex-direction: column; align-items: center; padding: 2.5rem 1rem; text-align: center; }
+  .ui-list-items > * + * { border-top: 1px solid var(--color-gray-100); }
+  .dark .ui-list-items > * + * { border-color: var(--color-gray-800); }
 }

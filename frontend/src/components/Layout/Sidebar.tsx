@@ -1,15 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import {
-  AccountsIcon,
-  DownloadsIcon,
-  HomeIcon,
-  MoonIcon,
-  SearchIcon,
-  SettingsIcon,
-  SunIcon,
-  SystemIcon,
-} from '../common/icons';
+import { AccountsIcon, DownloadsIcon, HomeIcon, MoonIcon, SearchIcon, SettingsIcon, SunIcon, SystemIcon } from '../common/icons';
 import { useSettingsStore } from '../../store/settings';
 
 const navItems = [
@@ -24,13 +15,13 @@ export default function Sidebar() {
   const { t } = useTranslation();
 
   return (
-    <aside className="app-material sticky top-0 z-30 hidden h-[100dvh] w-56 shrink-0 flex-col border-r border-gray-200/80 bg-white/85 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/90 md:flex">
+    <aside className="app-material sticky top-0 z-30 hidden h-[100dvh] w-56 shrink-0 flex-col border-r border-gray-200/80 bg-gray-50/85 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-950/90 md:flex">
       <div className="px-5 pb-4 pt-5">
         <div className="flex items-center gap-3">
           <img
             src="/icon-192x192.png"
             alt=""
-            className="h-8 w-8 shrink-0 rounded-lg ring-1 ring-black/5 dark:ring-white/10"
+            className="h-10 w-10 shrink-0 rounded-[11px] shadow-[0_2px_8px_rgba(0,0,0,0.14)] ring-1 ring-black/5 dark:ring-white/10"
           />
           <span className="text-base font-semibold tracking-tight text-gray-900 dark:text-white">
             Asspp Web

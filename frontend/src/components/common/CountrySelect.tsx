@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Select } from './FormControl';
 
 export default function CountrySelect({
   value,
@@ -18,11 +19,11 @@ export default function CountrySelect({
   const { t } = useTranslation();
 
   return (
-    <select
+    <Select
       value={value}
       onChange={(e) => onChange(e.target.value)}
       aria-label={t('regions.all')}
-      className={`rounded-md border border-gray-300/90 bg-gray-100 px-3.5 py-2.5 text-base text-gray-900 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-400/15 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 ${className}`}
+      className={className}
       disabled={disabled}
     >
       {availableCountryCodes.length > 0 && (
@@ -41,6 +42,6 @@ export default function CountrySelect({
           </option>
         ))}
       </optgroup>
-    </select>
+    </Select>
   );
 }

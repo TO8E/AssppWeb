@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Button, { buttonClass } from '../common/Button';
 import AppIcon from '../common/AppIcon';
 import Badge from '../common/Badge';
 import ProgressBar from '../common/ProgressBar';
@@ -33,7 +34,7 @@ export default function DownloadItem({
   }`;
 
   return (
-    <article className="min-w-0 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+    <article className="min-w-0 px-1 py-5">
       <div className="flex min-w-0 items-start gap-3">
         <AppIcon
           url={task.software.artworkUrl}
@@ -101,44 +102,40 @@ export default function DownloadItem({
         </p>
       )}
 
-      {task.status === 'completed' && task.hasFile && (
-        <div className="mt-3 border-t border-gray-100 pt-3 dark:border-gray-800">
-          <PackageQuickActions task={task} size="compact" />
-        </div>
-      )}
-
-      <div className="mt-3 grid min-w-0 grid-cols-2 gap-2">
+      <div className="mt-4">
+        <PackageQuickActions task={task}>
         {isActive ? (
-          <button
+          <Button
             type="button"
             onClick={() => onPause(task.id)}
-            className="min-h-10 min-w-0 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            variant="secondary" className="min-w-0"
           >
             {t('downloads.package.pause')}
-          </button>
+          </Button>
         ) : isPaused ? (
-          <button
+          <Button
             type="button"
             onClick={() => onResume(task.id)}
-            className="min-h-10 min-w-0 rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300 dark:hover:bg-blue-950"
+            variant="secondary" className="min-w-0"
           >
             {t('downloads.package.resume')}
-          </button>
+          </Button>
         ) : (
           <Link
             to={detailsHref}
-            className="inline-flex min-h-10 min-w-0 items-center justify-center rounded-lg border border-gray-300 px-3 py-2 text-center text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            className={buttonClass('secondary', 'min-w-0')}
           >
             {t('downloads.package.title')}
           </Link>
         )}
-        <button
+        <Button
           type="button"
           onClick={() => onDelete(task.id)}
-          className="min-h-10 min-w-0 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40"
+          variant="danger" className="min-w-0"
         >
           {t('downloads.package.delete')}
-        </button>
+        </Button>
+        </PackageQuickActions>
       </div>
     </article>
   );
@@ -146,7 +143,7 @@ export default function DownloadItem({
 
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-lg bg-gray-50 px-2.5 py-2 dark:bg-gray-800/60">
+    <div className="min-w-0 py-1">
       <dt className="truncate text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
         {label}
       </dt>

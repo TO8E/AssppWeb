@@ -1,6 +1,8 @@
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
+import ActionGroup from '../common/ActionGroup';
+import Button, { buttonClass } from '../common/Button';
 import { isPreviewDownloadTask } from './previewTasks';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import { useToastStore } from '../../store/toast';
@@ -11,27 +13,24 @@ import type { DownloadTask } from '../../types';
 interface PackageQuickActionsProps {
   task: DownloadTask;
   size?: 'compact' | 'default';
+  children?: ReactNode;
 }
 
 const iconClassName = 'h-4 w-4 shrink-0';
 
 export default function PackageQuickActions({
   task,
-  size = 'default',
+  children,
 }: PackageQuickActionsProps) {
   const { t } = useTranslation();
   const { privacyMode } = usePrivacy();
   const addToast = useToastStore((state) => state.addToast);
 
-  if (task.status !== 'completed' || !task.hasFile) return null;
+  if (task.status !== 'completed' || !task.hasFile) return children ? <ActionGroup>{children}</ActionGroup> : null;
 
   const installInfo = getInstallInfo(task.id);
   const isPreview = isPreviewDownloadTask(task);
-  const buttonSize =
-    size === 'compact'
-      ? 'min-h-10 px-2 text-xs'
-      : 'min-h-11 px-3 text-sm';
-  const secondaryButton = `${buttonSize} inline-flex min-w-0 items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-800`;
+
 
   function showPreviewNotice() {
     addToast(
@@ -123,15 +122,14 @@ export default function PackageQuickActions({
   }
 
   return (
-    <div
-      className="grid min-w-0 grid-cols-3 gap-2"
+    <ActionGroup
       aria-label={t('downloads.package.quickActions')}
       data-testid="package-quick-actions"
     >
       <a
         href={installInfo.installUrl}
         onClick={handleInstall}
-        className={`${buttonSize} inline-flex min-w-0 items-center justify-center gap-1.5 rounded-lg bg-blue-600 font-medium text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900`}
+        className={buttonClass('primary')}
         aria-label={t('downloads.package.install')}
       >
         <InstallIcon />
@@ -139,16 +137,16 @@ export default function PackageQuickActions({
       </a>
 
       <div className="group relative min-w-0">
-        <button
+        <Button
           type="button"
           onClick={handleShare}
           aria-describedby={isPreview || privacyMode ? undefined : `install-qr-${task.id}`}
-          className={`${secondaryButton} w-full`}
+          className="w-full"
           aria-label={t('downloads.package.share')}
         >
           <ShareIcon />
           <span className="truncate">{t('downloads.package.share')}</span>
-        </button>
+        </Button>
         {!isPreview && !privacyMode && (
           <div
             id={`install-qr-${task.id}`}
@@ -170,16 +168,17 @@ export default function PackageQuickActions({
         )}
       </div>
 
-      <button
+      <Button
         type="button"
         onClick={handleDownload}
-        className={secondaryButton}
+
         aria-label={t('downloads.package.downloadIpa')}
       >
         <DownloadIcon />
         <span className="truncate">{t('downloads.package.downloadShort')}</span>
-      </button>
-    </div>
+      </Button>
+      {children}
+    </ActionGroup>
   );
 }
 

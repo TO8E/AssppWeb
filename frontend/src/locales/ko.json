@@ -29,6 +29,7 @@
     "all": "모든 국가 / 지역"
   },
   "nav": {
+    "backTo": "{{page}}(으)로 돌아가기",
     "home": "홈",
     "accounts": "계정",
     "search": "검색",

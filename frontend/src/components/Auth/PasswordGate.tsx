@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '../common/Button';
+import { Input } from '../common/FormControl';
 import Spinner from '../common/Spinner';
 
 const SESSION_KEY = 'auth-token';
@@ -92,8 +94,8 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
   if (status === 'loading') {
     return (
       <GateBackdrop>
-        <div className="flex flex-col items-center gap-4 text-blue-600 dark:text-blue-400">
-          <AppMark />
+        <div role="status" className="flex flex-col items-center gap-3">
+          <span className="text-base font-medium text-gray-900 dark:text-white">Asspp Web</span>
           <div className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
             <Spinner />
             <span>{t('loading')}</span>
@@ -109,7 +111,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
 
   return (
     <GateBackdrop>
-      <main className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+      <main className="w-full max-w-sm p-6">
         <div className="text-center">
           <AppMark />
           <h1 className="mt-5 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
@@ -125,7 +127,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 dark:text-gray-500">
               <LockIcon />
             </div>
-            <input
+            <Input
               type="password"
               value={password}
               onChange={(e) => {
@@ -138,7 +140,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
               aria-describedby={error ? 'access-password-error' : undefined}
               autoComplete="current-password"
               autoFocus
-              className="min-h-11 w-full rounded-md border border-gray-300 bg-white py-2.5 pl-11 pr-4 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-400"
+              className="w-full pl-11 pr-4"
             />
           </div>
 
@@ -152,15 +154,15 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
             </p>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={submitting || !password}
             aria-busy={submitting}
-            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-gray-900"
+            variant="primary" className="w-full"
           >
             {submitting && <Spinner />}
             {submitting ? t('auth.verifying') : t('auth.submit')}
-          </button>
+          </Button>
         </form>
       </main>
     </GateBackdrop>
@@ -169,7 +171,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
 
 function GateBackdrop({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-[100svh] items-center justify-center bg-gray-50 px-4 py-10 dark:bg-gray-950">
+    <div className="flex min-h-[100svh] items-center justify-center bg-white px-4 py-10 dark:bg-gray-900">
       <div className="relative z-10 flex w-full items-center justify-center">
         {children}
       </div>
@@ -179,7 +181,7 @@ function GateBackdrop({ children }: { children: ReactNode }) {
 
 function AppMark() {
   return (
-    <img src="/icon-192x192.png" alt="" className="mx-auto h-12 w-12 rounded-lg ring-1 ring-black/5 dark:ring-white/10" />
+    <img src="/icon-192x192.png" alt="" className="mx-auto h-12 w-12 rounded-[11px]" />
   );
 }
 

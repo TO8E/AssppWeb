@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
-import Spinner from "../common/Spinner";
-import SapStatus from "../common/SapStatus";
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import ActionGroup from '../common/ActionGroup';
+import Button from '../common/Button';
+import { Input } from '../common/FormControl';
+import Section, { InfoRow } from '../common/Section';
+import Spinner from '../common/Spinner';
+import SapStatus from '../common/SapStatus';
 import { useAccountRoutes } from '../../hooks/useAccountRoutes';
 import { usePrivacy } from '../../hooks/usePrivacy';
-import { useAccounts } from "../../hooks/useAccounts";
-import { useToastStore } from "../../store/toast";
-import { authenticate, AuthenticationError } from "../../apple/authenticate";
-import { getErrorMessage } from "../../utils/error";
-import { storeIdToCountry } from "../../apple/config";
+import { useAccounts } from '../../hooks/useAccounts';
+import { useToastStore } from '../../store/toast';
+import { authenticate, AuthenticationError } from '../../apple/authenticate';
+import { getErrorMessage } from '../../utils/error';
+import { storeIdToCountry } from '../../apple/config';
 
 export default function AccountDetail() {
   const { email, accountId } = useParams<{ email: string; accountId: string }>();
@@ -40,7 +44,7 @@ export default function AccountDetail() {
 
   if (storeLoading || routesLoading) {
     return (
-      <PageContainer title={t("accounts.title")}>
+      <PageContainer back={{ to: "/accounts", label: t('nav.backTo', { page: t('nav.accounts') }) }} title={t("accounts.title")}>
         <div className="text-center text-gray-500 py-12">{t("loading")}</div>
       </PageContainer>
     );
@@ -49,15 +53,10 @@ export default function AccountDetail() {
   if (!account) {
     if (privacyMode && email) return <Navigate replace to="/accounts" />;
     return (
-      <PageContainer title={t("accounts.title")}>
+      <PageContainer back={{ to: "/accounts", label: t('nav.backTo', { page: t('nav.accounts') }) }} title={t("accounts.title")}>
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">{t("accounts.detail.notFound")}</p>
-          <button
-            onClick={() => navigate("/accounts")}
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            {t("accounts.detail.back")}
-          </button>
+
         </div>
       </PageContainer>
     );
@@ -120,10 +119,10 @@ export default function AccountDetail() {
     : account.store;
 
   return (
-    <PageContainer title={t("accounts.detail.title")}>
-      <div className="max-w-2xl space-y-6">
-        <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-          <dl className="divide-y divide-gray-100 dark:divide-gray-800">
+    <PageContainer back={{ to: "/accounts", label: t('nav.backTo', { page: t('nav.accounts') }) }} title={t("accounts.detail.title")}>
+      <div className="max-w-2xl">
+        <Section>
+          <dl className="">
             <DetailRow
               label={t("accounts.detail.name")}
               value={`${account.firstName} ${account.lastName}`}
@@ -152,10 +151,10 @@ export default function AccountDetail() {
               <DetailRow label={t("accounts.detail.pod")} value={account.pod} />
             )}
           </dl>
-        </section>
+        </Section>
 
         {needsCode && (
-          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
+          <Section>
             <label
               htmlFor="reauth-code"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -163,7 +162,7 @@ export default function AccountDetail() {
               {t("accounts.detail.code")}
             </label>
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-              <input
+              <Input
                 id="reauth-code"
                 type={privacyMode ? "password" : "text"}
                 inputMode="numeric"
@@ -173,67 +172,55 @@ export default function AccountDetail() {
                 onChange={(e) => setReauthCode(e.target.value)}
                 disabled={reauthing}
                 placeholder="000000"
-                className="min-h-11 w-full min-w-0 flex-1 rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:opacity-60 dark:bg-gray-800 dark:text-white"
+                className="w-full min-w-0 flex-1"
                 autoFocus
               />
-              <button
+              <Button
                 onClick={handleReauth}
                 disabled={reauthing || !reauthCode}
-                className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                variant="primary" className="shrink-0"
               >
                 {reauthing && <Spinner />}
                 {t("accounts.detail.verify")}
-              </button>
-              <SapStatus />
+              </Button>
             </div>
-          </section>
+            <SapStatus />
+          </Section>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleReauth}
-            disabled={reauthing}
-            className="flex min-h-11 items-center gap-2 rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {reauthing && <Spinner />}
-            {t("accounts.detail.reauth")}
-          </button>
-          <SapStatus />
-
-          {!showDelete ? (
-            <button
-              onClick={() => setShowDelete(true)}
-              className="min-h-11 rounded-full bg-red-50 px-5 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 dark:bg-red-950/40 dark:text-red-400 dark:hover:bg-red-950/70"
+        <div className="my-4 space-y-4">
+          <ActionGroup>
+            <Button
+              onClick={handleReauth}
+              disabled={reauthing || needsCode || showDelete}
+              variant="primary"
             >
-              {t("accounts.detail.delete")}
-            </button>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t("accounts.detail.areYouSure")}
-              </span>
-              <button
-                onClick={handleDelete}
-                className="min-h-11 rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-              >
-                {t("accounts.detail.confirmDelete")}
-              </button>
-              <button
-                onClick={() => setShowDelete(false)}
-                className="min-h-11 rounded-full bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                {t("accounts.detail.cancel")}
-              </button>
+              {reauthing && <Spinner />}
+              {t('accounts.detail.reauth')}
+            </Button>
+            <Button
+              onClick={() => setShowDelete(true)}
+              disabled={reauthing || showDelete}
+              variant="danger"
+            >
+              {t('accounts.detail.delete')}
+            </Button>
+          </ActionGroup>
+          {!needsCode && <SapStatus />}
+          {showDelete && (
+            <div className="border-t border-gray-100 pt-4 dark:border-gray-800">
+              <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">{t('accounts.detail.areYouSure')}</p>
+              <div className="flex flex-wrap gap-3">
+                <Button onClick={() => setShowDelete(false)} variant="secondary">
+                  {t('accounts.detail.cancel')}
+                </Button>
+                <Button onClick={handleDelete} variant="danger-solid">
+                  {t('accounts.detail.confirmDelete')}
+                </Button>
+              </div>
             </div>
           )}
         </div>
-
-        <button
-          onClick={() => navigate("/accounts")}
-          className="mt-2 inline-block min-h-11 rounded-full bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-        >
-          {t("accounts.detail.back")}
-        </button>
       </div>
     </PageContainer>
   );
@@ -241,14 +228,5 @@ export default function AccountDetail() {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   const { mask } = usePrivacy();
-  return (
-    <div className="py-3 first:pt-0 last:pb-0">
-      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-        {label}
-      </dt>
-      <dd className="mt-0.5 text-sm text-gray-900 dark:text-white break-all">
-        {mask(value) || "--"}
-      </dd>
-    </div>
-  );
+  return <InfoRow label={label}>{mask(value) || '--'}</InfoRow>;
 }

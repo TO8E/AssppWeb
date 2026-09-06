@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Select } from './FormControl';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import type { Account } from '../../types';
 
@@ -14,7 +15,7 @@ export default function AccountSelect({ accounts, value, onChange, disabled, cla
   const { privacyMode, accountLabel } = usePrivacy();
   const index = accounts.findIndex((account) => account.email === value);
   return (
-    <select
+    <Select
       aria-label={t('search.product.account')}
       value={privacyMode ? String(index) : value}
       onChange={(event) => {
@@ -32,6 +33,6 @@ export default function AccountSelect({ accounts, value, onChange, disabled, cla
           {accountLabel(account, optionIndex)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }

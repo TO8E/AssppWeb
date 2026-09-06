@@ -1,16 +1,19 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
-import AppIcon from "../common/AppIcon";
-import CountrySelect from "../common/CountrySelect";
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import { Select } from '../common/FormControl';
+import SearchField from '../common/SearchField';
+import EmptyState from '../common/EmptyState';
+import AppIcon from '../common/AppIcon';
+import CountrySelect from '../common/CountrySelect';
 import { ChevronRightIcon } from '../common/icons';
-import { useSearch } from "../../hooks/useSearch";
-import { useAccounts } from "../../hooks/useAccounts";
-import { useSettingsStore } from "../../store/settings";
-import { useToastStore } from "../../store/toast";
-import { firstAccountCountry } from "../../utils/account";
-import { countryCodeMap, storeIdToCountry } from "../../apple/config";
+import { useSearch } from '../../hooks/useSearch';
+import { useAccounts } from '../../hooks/useAccounts';
+import { useSettingsStore } from '../../store/settings';
+import { useToastStore } from '../../store/toast';
+import { firstAccountCountry } from '../../utils/account';
+import { countryCodeMap, storeIdToCountry } from '../../apple/config';
 
 export default function SearchPage() {
   const { t } = useTranslation();
@@ -68,80 +71,42 @@ export default function SearchPage() {
     <PageContainer title={t("search.title")}>
       <form
         onSubmit={handleSubmit}
-        className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-3 dark:bg-gray-900 sm:p-4"
+        className="mb-5 space-y-3 border-b border-gray-100 pb-4 dark:border-gray-800"
       >
-        <div className="flex min-w-0 items-center gap-2">
-          <input
-            type="text"
-            value={term}
-            onChange={(e) => setSearchParam({ term: e.target.value })}
-            placeholder={t("search.placeholder")}
-            aria-label={t("search.placeholder")}
-            className="min-h-11 min-w-0 flex-1 rounded-md border-0 bg-gray-100 px-4 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400"
-          />
-          <button
-            type="submit"
-            disabled={loading || !term.trim()}
-            className="min-h-11 shrink-0 whitespace-nowrap rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? t("search.searching") : t("search.button")}
-          </button>
-        </div>
-        <div className="flex w-full gap-3 overflow-hidden border-t border-gray-100 pt-3 dark:border-gray-800">
+        <SearchField value={term} onChange={(value) => setSearchParam({ term: value })} placeholder={t('search.placeholder')} buttonLabel={loading ? t('search.searching') : t('search.button')} busy={loading} />
+        <div className="flex w-full gap-3 sm:max-w-md">
           <CountrySelect
             value={activeCountry}
             onChange={(c) => setSearchParam({ country: c })}
             availableCountryCodes={availableCountryCodes}
             allCountryCodes={allCountryCodes}
-            className="w-1/2 truncate border-0 bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white"
+            className="w-1/2"
           />
-          <select
+          <Select
             value={activeEntity}
             onChange={(e) => setSearchParam({ entity: e.target.value })}
             aria-label={t("settings.defaults.entity")}
-            className="min-h-11 w-1/2 truncate rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white"
+            className="w-1/2"
           >
             <option value="iPhone">iPhone</option>
             <option value="iPad">iPad</option>
-          </select>
+          </Select>
         </div>
       </form>
 
       {results.length === 0 && !loading && !error && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-6 py-10 text-center dark:bg-gray-900">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
-            <svg
-              className="h-8 w-8 text-blue-600 dark:text-blue-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-              />
-            </svg>
-          </div>
-          <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-            {t("search.empty")}
-          </h3>
-          <p className="max-w-full text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-            {t("search.emptyDesc")}
-          </p>
-        </div>
+        <EmptyState title={t('search.empty')} description={t('search.emptyDesc')} />
       )}
 
       {results.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+        <div className="ui-list">
+          <div className="ui-list-items">
             {results.map((app) => (
               <Link
                 key={app.id}
                 to={`/search/${app.id}`}
                 state={{ app, country: activeCountry }}
-                className="flex min-w-0 items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-gray-800/70 dark:active:bg-gray-800"
+                className="ui-list-row"
               >
                 <AppIcon url={app.artworkUrl} name={app.name} size="sm" />
                 <div className="min-w-0 flex-1">

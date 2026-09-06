@@ -22,7 +22,7 @@ export default function Alert({
   const { privacyMode, hidden } = usePrivacy();
   return (
     <div
-      className={`rounded-2xl border px-4 py-3 text-sm leading-6 [overflow-wrap:anywhere] ${styles[type]} ${className}`}
+      className={`rounded-md border px-4 py-3 text-sm leading-6 [overflow-wrap:anywhere] ${styles[type]} ${className}`}
     >
       {privacyMode && type === 'error' ? hidden : children}
     </div>

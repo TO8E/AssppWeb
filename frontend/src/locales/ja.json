@@ -29,6 +29,7 @@
     "all": "すべての国 / 地域"
   },
   "nav": {
+    "backTo": "{{page}}に戻る",
     "home": "ホーム",
     "accounts": "アカウント",
     "search": "検索",

@@ -323,30 +323,14 @@ The `e2e/docker-test.sh` script automates the full flow: build, test, and verify
 - Page padding: `px-4 sm:px-6`, `py-6`
 - Container: `max-w-5xl` (1024px)
 
-### Depth & Surfaces
+### Shared Interface Implementation
 
-- Single elevation: white cards on `gray-50` background
-- No shadows. Borders only where they serve function (form inputs, dividers, interactive boundaries)
-- Rounded corners: `rounded-lg` (12px) for cards, `rounded-md` (8px) for inputs/buttons, `rounded-full` for badges
-- Follow the restrained typography, clear hierarchy, immediate feedback and accessibility guidance from [apple-design](https://github.com/emilkowalski/skills/tree/main/skills/apple-design). Keep decorative gradients and glow effects out of the utility interface; preserve the intentional 350 ms version lookup debounce.
-- Prefer background tinting (`gray-50` → `gray-100`) over borders for visual containment
-
-### Layout
-
-- Desktop: fixed sidebar (240px / `w-60`) + scrollable main content
-- Mobile: bottom tab bar with safe-area padding
-- Breakpoint: `md:` (768px) for sidebar ↔ bottom nav switch
-- Page structure: `PageContainer` with title + optional action button, then content
-
-### Component Patterns
-
-- **Buttons**: Primary (`bg-blue-600 text-white`), Secondary (`border border-gray-300 text-gray-700`), Danger (`text-red-600 border-red-300`)
-- **Inputs**: `rounded-md border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`
-- **Cards**: White background, `border border-gray-200 rounded-lg`, no shadow
-- **Badge**: Color-coded pill (`rounded-full px-2 py-0.5 text-xs font-medium`)
-- **ProgressBar**: Gray track, blue fill, percentage label
-- **AppIcon**: 3 sizes (40/56/80px), rounded corners, letter fallback
-- **Nav active state**: `bg-blue-50 text-blue-700` (sidebar), `text-blue-600` (mobile)
+- Follow `docs/interface-design.md` and the shared components in `frontend/src/components/common/`.
+- Use `SearchField` for app search and Bundle ID lookup; do not hand-code another search layout.
+- Use `Button` / `buttonClass`, `Input` / `Select`, and `Switch` for controls. Page-level classes only position controls; dimensions, colors and focus treatment belong to the shared implementation.
+- Use `Section`, `InfoRow`, `SoftwareHeader`, `EmptyState` and the shared list classes for content. Continuous page surfaces and dividers replace per-section cards and metadata tiles.
+- Every child page supplies `PageContainer.back`, including loading and unavailable states. Use explicit parent destinations; preserve app/storefront route state when returning from versions.
+- Keep animations limited to immediate interaction feedback and respect reduced motion.
 
 ## Frontend Cleanup Rules
 
@@ -398,12 +382,7 @@ Before merging any frontend PR, verify imports follow the convention in every ch
 
 ### Empty State Containers
 
-Empty states (shown when a list has no items) use a consistent pattern:
-
-- `border-2 border-dashed` (not solid border)
-- `bg-gray-50 dark:bg-gray-900/30` background
-- No `transition-colors` (removed to prevent dark mode flashing)
-- Centered icon in a white circle, title, description, optional CTA button
+Use the shared `EmptyState` component with a short title, description and a relevant action. Do not introduce page-specific dashed cards or large decorative icon panels.
 
 ### Dark Mode Color Pairings
 

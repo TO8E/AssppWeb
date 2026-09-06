@@ -13,7 +13,7 @@ export default function MobileHeader() {
           <img
             src="/icon-192x192.png"
             alt=""
-            className="h-7 w-7 justify-self-center rounded-md ring-1 ring-black/5 dark:ring-white/10"
+            className="h-7 w-7 justify-self-center rounded-[11px]"
           />
           <span className="truncate text-center text-base font-semibold tracking-tight text-gray-900 dark:text-white">
             Asspp Web

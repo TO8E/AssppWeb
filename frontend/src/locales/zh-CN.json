@@ -29,6 +29,7 @@
     "all": "所有国家 / 地区"
   },
   "nav": {
+    "backTo": "返回{{page}}",
     "home": "首页",
     "accounts": "账号",
     "search": "搜索",

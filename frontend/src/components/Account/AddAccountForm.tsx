@@ -1,15 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
-import Spinner from "../common/Spinner";
-import SapStatus from "../common/SapStatus";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import ActionGroup from '../common/ActionGroup';
+import Button from '../common/Button';
+import { Input } from '../common/FormControl';
+import Section from '../common/Section';
+import Spinner from '../common/Spinner';
+import SapStatus from '../common/SapStatus';
 import { usePrivacy } from '../../hooks/usePrivacy';
-import { useAccounts } from "../../hooks/useAccounts";
-import { useToastStore } from "../../store/toast";
-import { authenticate, AuthenticationError } from "../../apple/authenticate";
-import { getErrorMessage } from "../../utils/error";
-import { generateDeviceId } from "../../apple/config";
+import { useAccounts } from '../../hooks/useAccounts';
+import { useToastStore } from '../../store/toast';
+import { authenticate, AuthenticationError } from '../../apple/authenticate';
+import { getErrorMessage } from '../../utils/error';
+import { generateDeviceId } from '../../apple/config';
 
 export default function AddAccountForm() {
   const navigate = useNavigate();
@@ -24,8 +28,7 @@ export default function AddAccountForm() {
   const [deviceId, setDeviceId] = useState(() => generateDeviceId());
   const [needsCode, setNeedsCode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const inputClassName =
-    "block min-h-11 w-full min-w-0 max-w-full rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-800 dark:text-white";
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,10 +64,10 @@ export default function AddAccountForm() {
   }
 
   return (
-    <PageContainer title={t("accounts.addForm.title")}>
+    <PageContainer back={{ to: "/accounts", label: t('nav.backTo', { page: t('nav.accounts') }) }} title={t("accounts.addForm.title")}>
       <div className="max-w-2xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <section className="space-y-5 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Section className="space-y-5">
             <div>
               <label
                 htmlFor="email"
@@ -72,7 +75,7 @@ export default function AddAccountForm() {
               >
                 {t("accounts.addForm.email")}
               </label>
-              <input
+              <Input
                 id="email"
                 type={privacyMode ? "password" : "text"}
                 required
@@ -81,7 +84,7 @@ export default function AddAccountForm() {
                 disabled={loading}
                 placeholder={privacyMode ? undefined : t("accounts.addForm.emailPlaceholder")}
                 autoComplete={privacyMode ? "off" : "username"}
-                className={inputClassName}
+
               />
             </div>
 
@@ -92,14 +95,14 @@ export default function AddAccountForm() {
               >
                 {t("accounts.addForm.password")}
               </label>
-              <input
+              <Input
                 id="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className={inputClassName}
+
               />
             </div>
 
@@ -110,24 +113,24 @@ export default function AddAccountForm() {
               >
                 {t("accounts.addForm.deviceId")}
               </label>
-              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-                <input
+              <div className="flex items-start gap-2">
+                <Input
                   id="deviceId"
                   type={privacyMode ? "password" : "text"}
                   required
                   value={deviceId}
                   onChange={(e) => setDeviceId(e.target.value)}
                   disabled={loading || needsCode}
-                  className={`${inputClassName} min-w-0 flex-1 font-mono`}
+                  className="flex-1 font-mono"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setDeviceId(generateDeviceId())}
                   disabled={loading || needsCode}
-                  className="min-h-11 w-full shrink-0 whitespace-normal rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:whitespace-nowrap dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  variant="secondary" className="shrink-0"
                 >
                   {t("accounts.addForm.randomize")}
-                </button>
+                </Button>
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 {t("accounts.addForm.deviceIdHelp")}
@@ -142,7 +145,7 @@ export default function AddAccountForm() {
                 >
                   {t("accounts.addForm.code")}
                 </label>
-                <input
+                <Input
                   id="code"
                   type={privacyMode ? "password" : "text"}
                   inputMode="numeric"
@@ -152,7 +155,7 @@ export default function AddAccountForm() {
                   onChange={(e) => setCode(e.target.value)}
                   disabled={loading}
                   placeholder={t("accounts.addForm.codePlaceholder")}
-                  className={inputClassName}
+
                   autoFocus
                 />
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -160,29 +163,29 @@ export default function AddAccountForm() {
                 </p>
               </div>
             )}
-          </section>
+          </Section>
 
-          <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
-            <button
+          <ActionGroup>
+            <Button
+              type="button"
+              onClick={() => navigate("/accounts")}
+              disabled={loading}
+              variant="secondary"
+            >
+              {t("accounts.addForm.cancel")}
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              variant="primary"
             >
               {loading && <Spinner />}
               {needsCode
                 ? t("accounts.addForm.verify")
                 : t("accounts.addForm.signIn")}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/accounts")}
-              disabled={loading}
-              className="min-h-11 rounded-full bg-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              {t("accounts.addForm.cancel")}
-            </button>
-            <SapStatus />
-          </div>
+            </Button>
+          </ActionGroup>
+          <SapStatus />
         </form>
       </div>
     </PageContainer>

@@ -29,6 +29,7 @@
     "all": "所有國家 / 地區"
   },
   "nav": {
+    "backTo": "返回{{page}}",
     "home": "首頁",
     "accounts": "帳號",
     "search": "搜尋",

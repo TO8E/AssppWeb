@@ -1,23 +1,22 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import ActionGroup from '../common/ActionGroup';
+import Button, { buttonClass } from '../common/Button';
+import Section, { InfoRow } from '../common/Section';
+import SoftwareHeader from '../common/SoftwareHeader';
 import AccountSelect from '../common/AccountSelect';
 import Alert from '../common/Alert';
-import AppIcon from "../common/AppIcon";
 import Spinner from '../common/Spinner';
 import SapStatus from '../common/SapStatus';
-import {
-  isProductPreviewEnabled,
-  previewProductAccounts,
-  previewProductApp,
-} from './productPreview';
-import { useAccounts } from "../../hooks/useAccounts";
-import { useDownloadAction } from "../../hooks/useDownloadAction";
+import { isProductPreviewEnabled, previewProductAccounts, previewProductApp } from './productPreview';
+import { useAccounts } from '../../hooks/useAccounts';
+import { useDownloadAction } from '../../hooks/useDownloadAction';
 import { useToastStore } from '../../store/toast';
-import { lookupApp } from "../../api/search";
-import { storeIdToCountry } from "../../apple/config";
-import type { Software } from "../../types";
+import { lookupApp } from '../../api/search';
+import { storeIdToCountry } from '../../apple/config';
+import type { Software } from '../../types';
 
 export default function ProductDetail() {
   const { appId } = useParams<{ appId: string }>();
@@ -82,7 +81,7 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <PageContainer title={t("search.product.title")}>
+      <PageContainer back={{ to: "/search", label: t('nav.backTo', { page: t('nav.search') }) }} title={t("search.product.title")}>
         <div className="text-center text-gray-500 py-12">{t("loading")}</div>
       </PageContainer>
     );
@@ -90,7 +89,7 @@ export default function ProductDetail() {
 
   if (!app) {
     return (
-      <PageContainer title={t("search.product.title")}>
+      <PageContainer back={{ to: "/search", label: t('nav.backTo', { page: t('nav.search') }) }} title={t("search.product.title")}>
         <p className="text-gray-500">{t("search.product.notFound")}</p>
       </PageContainer>
     );
@@ -139,8 +138,8 @@ export default function ProductDetail() {
   }
 
   return (
-    <PageContainer>
-      <div className="min-w-0 space-y-5 [overflow-wrap:anywhere]">
+    <PageContainer title={t("search.product.title")} back={{ to: "/search", label: t('nav.backTo', { page: t('nav.search') }) }}>
+      <div className="min-w-0 [overflow-wrap:anywhere]">
         {previewEnabled && (
           <Alert type="warning">
             <span className="font-semibold">
@@ -150,32 +149,14 @@ export default function ProductDetail() {
           </Alert>
         )}
 
-        <section className="flex min-w-0 items-start gap-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:gap-5 sm:p-6">
-          <div className="shrink-0">
-            <AppIcon url={app.artworkUrl} name={app.name} size="lg" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
-              {app.name}
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400">{app.artistName}</p>
-            <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-              <span className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
-                {app.formattedPrice ?? t("search.product.free")}
-              </span>
-              <span className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
-                {app.primaryGenreName}
-              </span>
-              <span className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
-                v{app.version}
-              </span>
-              <span>
-                ★ {app.averageUserRating.toFixed(1)} ({app.userRatingCount}{" "}
-                {t("search.product.ratings")})
-              </span>
-            </div>
-          </div>
-        </section>
+        <Section>
+          <SoftwareHeader app={app}>
+            <span>{app.formattedPrice ?? t('search.product.free')}</span>
+            <span>{app.primaryGenreName}</span>
+            <span>v{app.version}</span>
+            <span>★ {app.averageUserRating.toFixed(1)} ({app.userRatingCount} {t('search.product.ratings')})</span>
+          </SoftwareHeader>
+        </Section>
 
         {productAccounts.length === 0 ? (
           <div className="rounded-2xl bg-yellow-50 p-4 text-sm text-yellow-800 ring-1 ring-yellow-200/70 dark:bg-yellow-950/30 dark:text-yellow-300 dark:ring-yellow-800/50">
@@ -189,7 +170,7 @@ export default function ProductDetail() {
             {t("search.product.noAccountsForRegion")}
           </div>
         ) : (
-          <section className="space-y-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900">
+          <Section className="space-y-4">
             <div className="min-w-0">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("search.product.account")}
@@ -198,33 +179,29 @@ export default function ProductDetail() {
                 accounts={filteredAccounts}
                 value={selectedAccount}
                 onChange={setSelectedAccount}
-                className="min-h-11 w-full min-w-0 rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white"
+                className="min-w-0"
                 disabled={loadingAction !== null}
               />
             </div>
-            <div className="grid min-w-0 grid-flow-col auto-cols-fr gap-2 sm:gap-3">
+            <ActionGroup>
               {(app.price === undefined || app.price === 0) && (
-                <button
+                <Button
                   type="button"
                   onClick={handlePurchase}
                   disabled={loadingAction !== null}
-                  className="inline-flex min-h-10 w-full min-w-0 items-center justify-center rounded-full bg-blue-50 px-2 py-2 text-center text-xs font-semibold leading-tight text-blue-600 transition-colors hover:bg-blue-100 disabled:opacity-50 dark:bg-blue-950/60 dark:text-blue-400 dark:hover:bg-blue-950 sm:px-5 sm:text-sm"
+                  variant="secondary" className="min-w-0"
                 >
                   {loadingAction === "purchase"
                     ? t("search.product.processing")
                     : t("search.product.getLicense")}
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
                 onClick={handleDownload}
                 disabled={loadingAction !== null || !account}
                 aria-busy={isDownloading}
-                className={`inline-flex min-h-10 w-full min-w-0 items-center justify-center gap-1.5 rounded-full bg-blue-600 px-2 py-2 text-center text-xs font-semibold leading-tight text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed sm:gap-2 sm:px-5 sm:text-sm ${
-                  !account || (loadingAction !== null && !isDownloading)
-                    ? 'opacity-50'
-                    : ''
-                }`}
+                variant="primary" className="min-w-0"
               >
                 <span
                   aria-hidden="true"
@@ -233,88 +210,60 @@ export default function ProductDetail() {
                   {isDownloading ? <Spinner /> : <DownloadIcon />}
                 </span>
                 <span>{t("search.product.download")}</span>
-              </button>
+              </Button>
               <Link
                 to={`/search/${app.id}/versions`}
                 state={{ app, country }}
-                className="inline-flex min-h-10 w-full min-w-0 items-center justify-center rounded-full bg-gray-100 px-2 py-2 text-center text-xs font-semibold leading-tight text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 sm:px-5 sm:text-sm"
+                className={buttonClass('secondary', 'min-w-0')}
               >
                 {t("search.product.versionHistory")}
               </Link>
-            </div>
+            </ActionGroup>
             <SapStatus />
-          </section>
+          </Section>
         )}
 
-        <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-          <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
+        <Section>
+          <h2 className="ui-section-title">
             {t("search.product.details")}
           </h2>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.bundleId")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200 break-all">
-              {app.bundleID}
-            </dd>
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.version")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200">{app.version}</dd>
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.size")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200">
-              {app.fileSizeBytes
+          <dl className="min-w-0">
+            <InfoRow label={t("search.product.bundleId")}>{app.bundleID}</InfoRow>
+            <InfoRow label={t("search.product.version")}>{app.version}</InfoRow>
+            <InfoRow label={t("search.product.size")}>{app.fileSizeBytes
                 ? `${(parseInt(app.fileSizeBytes) / 1024 / 1024).toFixed(1)} MB`
-                : "N/A"}
-            </dd>
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.minOs")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200">
-              {app.minimumOsVersion}
-            </dd>
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.seller")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200">
-              {app.sellerName}
-            </dd>
-            <dt className="text-gray-500 dark:text-gray-400">
-              {t("search.product.released")}
-            </dt>
-            <dd className="text-gray-900 dark:text-gray-200">
-              {new Date(app.releaseDate).toLocaleDateString()}
-            </dd>
+                : "N/A"}</InfoRow>
+            <InfoRow label={t("search.product.minOs")}>{app.minimumOsVersion}</InfoRow>
+            <InfoRow label={t("search.product.seller")}>{app.sellerName}</InfoRow>
+            <InfoRow label={t("search.product.released")}>{new Date(app.releaseDate).toLocaleDateString()}</InfoRow>
           </dl>
-        </section>
+        </Section>
 
         {app.description && (
-          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
+          <Section>
+            <h2 className="ui-section-title">
               {t("search.product.description")}
             </h2>
             <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
               {app.description}
             </p>
-          </section>
+          </Section>
         )}
 
         {app.releaseNotes && (
-          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
+          <Section>
+            <h2 className="ui-section-title">
               {t("search.product.releaseNotes")}
             </h2>
             <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
               {app.releaseNotes}
             </p>
-          </section>
+          </Section>
         )}
 
         {app.screenshotUrls && app.screenshotUrls.length > 0 && (
-          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
+          <Section>
+            <h2 className="ui-section-title">
               {t("search.product.screenshots")}
             </h2>
             <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -328,7 +277,7 @@ export default function ProductDetail() {
                 />
               ))}
             </div>
-          </section>
+          </Section>
         )}
       </div>
     </PageContainer>

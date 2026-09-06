@@ -1,12 +1,14 @@
-import { useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
+import { useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import { buttonClass } from '../common/Button';
+import EmptyState from '../common/EmptyState';
 import { AccountsIcon, ChevronRightIcon } from '../common/icons';
 import { useAccountRoutes } from '../../hooks/useAccountRoutes';
 import { usePrivacy } from '../../hooks/usePrivacy';
-import { useAccountsStore } from "../../store/accounts";
-import { storeIdToCountry } from "../../apple/config";
+import { useAccountsStore } from '../../store/accounts';
+import { storeIdToCountry } from '../../apple/config';
 
 export default function AccountList() {
   const { t } = useTranslation();
@@ -24,7 +26,7 @@ export default function AccountList() {
       action={
         <Link
           to="/accounts/add"
-          className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+          className={buttonClass('primary', '')}
         >
           {t("accounts.add")}
         </Link>
@@ -35,50 +37,9 @@ export default function AccountList() {
           {t("accounts.loading")}
         </div>
       ) : accounts.length === 0 ? (
-        <div className="my-4 flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-6 py-10 text-center dark:bg-gray-900">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
-            <svg
-              className="h-8 w-8 text-blue-600 dark:text-blue-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-              />
-            </svg>
-          </div>
-          <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-            {t("accounts.empty")}
-          </h3>
-          <p className="mb-6 max-w-full text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-            {t("accounts.emptyDesc")}
-          </p>
-          <Link
-            to="/accounts/add"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            {t("accounts.addFirst")}
-          </Link>
-        </div>
+        <EmptyState title={t('accounts.empty')} description={t('accounts.emptyDesc')} action={<Link to="/accounts/add" className={buttonClass('primary')}>{t('accounts.add')}</Link>} />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="ui-list">
           <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {accounts.map((account) => {
               const countryCode =
@@ -91,13 +52,7 @@ export default function AccountList() {
                   to={privacyMode ? (ids[account.email] ? `/accounts/id/${ids[account.email]}` : "/accounts") : `/accounts/${encodeURIComponent(account.email)}`}
                   aria-disabled={privacyMode && !ids[account.email]}
                   onClick={(event) => { if (privacyMode && !ids[account.email]) event.preventDefault(); }}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 p-4 transition-colors ${
-                      isActive
-                        ? "bg-blue-50 dark:bg-blue-950/50"
-                        : "hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-gray-800/70 dark:active:bg-gray-800"
-                    }`
-                  }
+                  className="ui-list-row"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-base font-medium text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
                     {privacyMode ? <AccountsIcon className="h-5 w-5" /> : (account.firstName || account.email).charAt(0).toUpperCase()}

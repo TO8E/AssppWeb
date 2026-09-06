@@ -29,6 +29,7 @@
     "all": "All Regions"
   },
   "nav": {
+    "backTo": "Back to {{page}}",
     "home": "Home",
     "accounts": "Accounts",
     "search": "Search",

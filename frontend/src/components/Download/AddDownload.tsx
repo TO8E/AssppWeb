@@ -1,19 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import PageContainer from "../Layout/PageContainer";
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import PageContainer from '../Layout/PageContainer';
+import ActionGroup from '../common/ActionGroup';
+import Button from '../common/Button';
+import { Select } from '../common/FormControl';
+import SearchField from '../common/SearchField';
+import EmptyState from '../common/EmptyState';
 import AccountSelect from '../common/AccountSelect';
-import AppIcon from "../common/AppIcon";
-import CountrySelect from "../common/CountrySelect";
-import { useAccounts } from "../../hooks/useAccounts";
-import { useDownloadAction } from "../../hooks/useDownloadAction";
-import { useSettingsStore } from "../../store/settings";
-import { useToastStore } from "../../store/toast";
-import { lookupApp } from "../../api/search";
-import { listVersions } from "../../apple/versionFinder";
-import { firstAccountCountry } from "../../utils/account";
-import { getErrorMessage } from "../../utils/error";
-import { countryCodeMap, storeIdToCountry } from "../../apple/config";
-import type { Software } from "../../types";
+import SoftwareHeader from '../common/SoftwareHeader';
+import CountrySelect from '../common/CountrySelect';
+import { useAccounts } from '../../hooks/useAccounts';
+import { useDownloadAction } from '../../hooks/useDownloadAction';
+import { useSettingsStore } from '../../store/settings';
+import { useToastStore } from '../../store/toast';
+import { lookupApp } from '../../api/search';
+import { listVersions } from '../../apple/versionFinder';
+import { firstAccountCountry } from '../../utils/account';
+import { getErrorMessage } from '../../utils/error';
+import { countryCodeMap, storeIdToCountry } from '../../apple/config';
+import type { Software } from '../../types';
 
 export default function AddDownload() {
   const { accounts, updateAccount } = useAccounts();
@@ -142,35 +147,17 @@ export default function AddDownload() {
   }
 
   return (
-    <PageContainer title={t("downloads.add.title")}>
+    <PageContainer back={{ to: "/downloads", label: t('nav.backTo', { page: t('nav.downloads') }) }} title={t("downloads.add.title")}>
       <div className="min-w-0 space-y-6">
         <form
           onSubmit={handleLookup}
-          className="min-w-0 space-y-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-4 dark:bg-gray-900 sm:p-5"
+          className="min-w-0 space-y-4 border-b border-gray-100 pb-6 dark:border-gray-800"
         >
           <div className="min-w-0">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("downloads.add.bundleId")}
             </label>
-            <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-              <input
-                type="text"
-                value={bundleId}
-                onChange={(e) => setBundleId(e.target.value)}
-                placeholder={t("downloads.add.placeholder")}
-                className="min-h-11 w-full min-w-0 flex-1 rounded-xl border-0 bg-gray-100 px-4 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-800 dark:text-white"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={isLoading || !bundleId.trim()}
-                className="min-h-11 min-w-0 whitespace-normal break-words rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
-              >
-                {loadingAction === "lookup"
-                  ? t("downloads.add.lookingUp")
-                  : t("downloads.add.lookup")}
-              </button>
-            </div>
+            <SearchField value={bundleId} onChange={setBundleId} placeholder={t('downloads.add.placeholder')} buttonLabel={loadingAction === 'lookup' ? t('downloads.add.lookingUp') : t('downloads.add.lookup')} busy={isLoading} disabled={isLoading} />
           </div>
           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
             <CountrySelect
@@ -182,81 +169,36 @@ export default function AddDownload() {
               availableCountryCodes={availableCountryCodes}
               allCountryCodes={allCountryCodes}
               disabled={isLoading}
-              className="min-h-11 w-full min-w-0 max-w-full truncate disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 dark:disabled:bg-gray-800/50 dark:disabled:text-gray-400"
+              className="w-full min-w-0 max-w-full"
             />
             <AccountSelect
               accounts={filteredAccounts}
               value={selectedAccount}
               onChange={setSelectedAccount}
               emptyLabel={t('downloads.add.noAccountsForRegion')}
-              className="min-h-11 w-full min-w-0 max-w-full truncate rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-800 dark:text-white"
+              className="w-full min-w-0 max-w-full"
               disabled={isLoading || filteredAccounts.length === 0}
             />
           </div>
         </form>
 
         {!app && !isLoading && (
-          <div className="flex min-w-0 flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-5 py-10 text-center dark:bg-gray-900 sm:px-6">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
-              <svg
-                className="h-8 w-8 text-blue-600 dark:text-blue-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="mb-2 min-w-0 break-words text-center text-lg font-semibold text-gray-900 [overflow-wrap:anywhere] dark:text-white">
-              {t("downloads.add.emptyTitle")}
-            </h3>
-            <p className="max-w-sm min-w-0 break-words text-center text-sm text-gray-500 [overflow-wrap:anywhere] dark:text-gray-400">
-              {t("downloads.add.emptyDesc")}
-            </p>
-          </div>
+          <EmptyState title={t('downloads.add.emptyTitle')} description={t('downloads.add.emptyDesc')} />
         )}
 
         {app && (
-          <div className="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
-            <div className="mb-4 flex min-w-0 items-start gap-4">
-              <AppIcon url={app.artworkUrl} name={app.name} size="md" />
-              <div className="min-w-0 flex-1">
-                <p
-                  title={app.name}
-                  className="min-w-0 break-words font-medium text-gray-900 [overflow-wrap:anywhere] dark:text-white"
-                >
-                  {app.name}
-                </p>
-                <p
-                  title={app.artistName}
-                  className="min-w-0 break-words text-sm text-gray-500 [overflow-wrap:anywhere] dark:text-gray-400"
-                >
-                  {app.artistName}
-                </p>
-                <p
-                  title={`${app.version} - ${app.formattedPrice ?? t("search.product.free")}`}
-                  className="min-w-0 break-all text-sm text-gray-400 dark:text-gray-500"
-                >
-                  v{app.version} -{" "}
-                  {app.formattedPrice ?? t("search.product.free")}
-                </p>
-              </div>
-            </div>
+          <div className="min-w-0 pb-6">
+            <div className="mb-4"><SoftwareHeader app={app}><span>v{app.version}</span><span>{app.formattedPrice ?? t('search.product.free')}</span></SoftwareHeader></div>
 
             {step === "versions" && versions.length > 0 && (
               <div className="mb-4 min-w-0">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {t("downloads.add.versionOptional")}
                 </label>
-                <select
+                <Select
                   value={selectedVersion}
                   onChange={(e) => setSelectedVersion(e.target.value)}
-                  className="min-h-11 w-full min-w-0 max-w-full truncate rounded-xl border-0 bg-gray-100 px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-800 dark:text-white"
+                  className="w-full min-w-0 max-w-full"
                 >
                   <option value="">{t("downloads.add.latest")}</option>
                   {versions.map((v) => (
@@ -264,43 +206,44 @@ export default function AddDownload() {
                       {v}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             )}
 
-            <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+            <ActionGroup>
               {(app.price === undefined || app.price === 0) && (
-                <button
+                <Button
                   onClick={handleGetLicense}
                   disabled={isLoading || !account}
-                  className="min-h-11 min-w-0 whitespace-normal break-words rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:bg-blue-950/60 dark:text-blue-400"
+                  variant="secondary" className="min-w-0 sm:w-auto"
                 >
                   {loadingAction === "license"
                     ? t("downloads.add.processing")
                     : t("downloads.add.getLicense")}
-                </button>
+                </Button>
               )}
-              {step !== "versions" && (
-                <button
-                  onClick={handleLoadVersions}
-                  disabled={isLoading || !account}
-                  className="min-h-11 min-w-0 whitespace-normal break-words rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                  {loadingAction === "versions"
-                    ? t("downloads.add.processing")
-                    : t("downloads.add.selectVersion")}
-                </button>
-              )}
-              <button
+
+              <Button
                 onClick={handleDownload}
                 disabled={isLoading || !account}
-                className="min-h-11 min-w-0 whitespace-normal break-words rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                variant="primary" className="min-w-0 sm:w-auto"
               >
                 {loadingAction === "download"
                   ? t("downloads.add.processing")
                   : t("downloads.add.download")}
-              </button>
-            </div>
+              </Button>
+              {step !== "versions" && (
+                <Button
+                  onClick={handleLoadVersions}
+                  disabled={isLoading || !account}
+                  variant="secondary" className="min-w-0 sm:w-auto"
+                >
+                  {loadingAction === "versions"
+                    ? t("downloads.add.processing")
+                    : t("downloads.add.selectVersion")}
+                </Button>
+              )}
+            </ActionGroup>
           </div>
         )}
       </div>

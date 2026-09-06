@@ -164,7 +164,7 @@ describe('ProductDetail download action', () => {
     });
     const iconSlot = downloadButton.querySelector('span[aria-hidden="true"]');
 
-    expect(downloadButton).toHaveClass('w-full', 'min-w-0');
+    expect(downloadButton).toHaveClass('ui-button', 'min-w-0');
     expect(downloadButton).not.toHaveClass('opacity-50');
     expect(downloadButton).toHaveAttribute('aria-busy', 'false');
     expect(iconSlot).toHaveClass('h-4', 'w-4', 'shrink-0');
@@ -177,7 +177,7 @@ describe('ProductDetail download action', () => {
     expect(downloadButton).toHaveAttribute('aria-busy', 'true');
     expect(downloadButton).toHaveTextContent('search.product.download');
     expect(downloadButton).not.toHaveTextContent('search.product.processing');
-    expect(downloadButton).toHaveClass('w-full', 'min-w-0');
+    expect(downloadButton).toHaveClass('ui-button', 'min-w-0');
     expect(downloadButton).not.toHaveClass('opacity-50');
     expect(downloadButton.querySelector('.animate-spin')).toBeInTheDocument();
     expect(accountSelect).toBeDisabled();
@@ -218,7 +218,7 @@ describe('ProductDetail download action', () => {
     expect(downloadButton).toHaveAttribute('aria-busy', 'false');
     expect(downloadButton).toHaveTextContent('search.product.download');
     expect(downloadButton).not.toHaveTextContent('search.product.processing');
-    expect(downloadButton).toHaveClass('w-full', 'min-w-0');
+    expect(downloadButton).toHaveClass('ui-button', 'min-w-0');
     expect(downloadButton).not.toHaveClass('opacity-50');
     expect(downloadButton.querySelector('.animate-spin')).not.toBeInTheDocument();
     expect(downloadButton.querySelector('span[aria-hidden="true"]')).toBe(
@@ -243,7 +243,7 @@ describe('ProductDetail download action', () => {
     await waitFor(() => expect(downloadButton).toBeEnabled());
   });
 
-  it('keeps license, download, and version actions in one grid row', () => {
+  it('keeps license, download, and version actions in one shared action group', () => {
     renderProductDetail();
 
     const licenseButton = screen.getByRole('button', {
@@ -259,7 +259,7 @@ describe('ProductDetail download action', () => {
 
     expect(actionRow).toBe(downloadButton.parentElement);
     expect(actionRow).toBe(versionLink.parentElement);
-    expect(actionRow).toHaveClass('grid', 'grid-flow-col', 'auto-cols-fr');
+    expect(actionRow).toHaveClass('ui-action-row');
     expect(Array.from(actionRow?.children ?? [])).toEqual([
       licenseButton,
       downloadButton,
@@ -267,7 +267,7 @@ describe('ProductDetail download action', () => {
     ]);
 
     for (const action of [licenseButton, downloadButton, versionLink]) {
-      expect(action).toHaveClass('w-full', 'min-w-0');
+      expect(action).toHaveClass('ui-button', 'min-w-0');
     }
   });
 

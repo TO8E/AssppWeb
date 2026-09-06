@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ReactNode } from 'react';
 import { CloseIcon } from './icons';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import { useToastStore, type ToastType } from '../../store/toast';
@@ -82,7 +82,7 @@ export default function ToastContainer() {
         {`
           @keyframes toast-slide-in {
             from { transform: translateX(120%); opacity: 0; }
-            to   { transform: translateX(0);    opacity: 1; }
+            to { transform: translateX(0); opacity: 1; }
           }
           .animate-toast-in {
             animation: toast-slide-in 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -129,7 +129,7 @@ export default function ToastContainer() {
 
             <button
               onClick={() => removeToast(toast.id)}
-              className="-mr-1 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              className="-mr-1 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200"
               aria-label="Close notification"
             >
               <CloseIcon className="h-4 w-4" />
