@@ -64,6 +64,8 @@ The server is a blind TCP proxy. It NEVER sees Apple credentials.
 - Maintained repository: `TO8E/AssppWeb`; original upstream: `Lakr233/AssppWeb`.
 - Default deployment image: `ghcr.io/to8e/assppweb:latest`.
 - Preserve upstream authorship and commit provenance when incorporating patches.
+- Preserve the original language of upstream commit messages.
+- For our own commits, keep Conventional Commit types and scopes in English (for example, `feat(deploy):` or `fix(download):`), and write the subject and body in Chinese. Keep code identifiers and attribution trailers intact.
 - Keep account storage compatible. Accounts and Apple credentials live in the browser's `asspp-accounts` IndexedDB database, not in the server data directory. Container rollback does not restore browser data or revive Apple-invalidated tokens.
 - `tools/compose-update/build.sh` builds this checkout and generates a separate activation script with rollback. Validate these helpers with `python3 tools/compose-update/tests/test_update.py`.
 
