@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSettingsStore } from '../store/settings';
 import { mergeCookies } from '../apple/cookies';
 import { listVersions } from '../apple/versionFinder';
 import { getVersionMetadata } from '../apple/versionLookup';
@@ -8,6 +9,7 @@ import type { Account, Cookie, Software } from '../types';
 
 export const VERSION_PAGE_SIZE = 20;
 const METADATA_LOAD_DELAY_MS = 350;
+type MetadataScope = { active: boolean };
 
 // Mount a fresh hook instance when the app or account identity changes.
 export function useVersionHistory(
@@ -15,6 +17,7 @@ export function useVersionHistory(
   account: Account,
   updateAccount: (account: Account) => Promise<void>,
 ) {
+  const autoFetchVersionNumbers = useSettingsStore((state) => state.autoFetchVersionNumbers);
   const latest = useRef({ account, updateAccount });
   latest.current = { account, updateAccount };
   const queue = useRef(Promise.resolve());
@@ -29,7 +32,9 @@ export function useVersionHistory(
   const [error, setError] = useState<unknown>(null);
   const [page, setPage] = useState(0);
   const [revision, setRevision] = useState(0);
-  const [retryRevision, setRetryRevision] = useState(0);
+  const metadataScope = useRef<MetadataScope>({ active: false });
+  const pendingMetadata = useRef(new Set<string>());
+  const [loadingMetadata, setLoadingMetadata] = useState<string[]>([]);
 
   async function saveCookies(requestAccount: Account, cookies: Cookie[]) {
     const current = latest.current.account;
@@ -42,6 +47,30 @@ export function useVersionHistory(
     const updated = { ...current, cookies: mergeCookies(current.cookies, changed) };
     await latest.current.updateAccount(updated);
     latest.current.account = updated;
+  }
+
+  async function loadMetadata(versionId: string, scope: MetadataScope) {
+    if (!scope.active) return;
+    try {
+      if (isVersionMetadataFresh(metadataRef.current[versionId])) return;
+      const requestAccount = latest.current.account;
+      const result = await getVersionMetadata(requestAccount, app, versionId);
+      if (!scope.active) return;
+      await saveCookies(requestAccount, result.updatedCookies);
+      if (!scope.active) return;
+      const cached = cacheVersionMetadata(app.id, account.store, versionId, result.metadata);
+      metadataRef.current = { ...metadataRef.current, [versionId]: cached };
+      setMetadata(metadataRef.current);
+    } catch {
+      if (!scope.active) return;
+      failedRef.current.add(versionId);
+      setFailed([...failedRef.current]);
+    } finally {
+      if (scope.active) {
+        pendingMetadata.current.delete(versionId);
+        setLoadingMetadata([...pendingMetadata.current]);
+      }
+    }
   }
 
   useEffect(() => {
@@ -71,59 +100,63 @@ export function useVersionHistory(
   }, [revision]);
 
   useEffect(() => {
-    let active = true;
-    const visibleVersions = versions.slice(page * VERSION_PAGE_SIZE, (page + 1) * VERSION_PAGE_SIZE);
+    const scope = { active: true };
+    metadataScope.current = scope;
+    pendingMetadata.current.clear();
+    setLoadingMetadata([]);
+    if (!autoFetchVersionNumbers) setPage(0);
+    const visibleVersions = autoFetchVersionNumbers
+      ? versions.slice(page * VERSION_PAGE_SIZE, (page + 1) * VERSION_PAGE_SIZE)
+      : versions;
     // A long-lived tab must not reuse expired labels from its in-memory state.
     metadataRef.current = Object.fromEntries(Object.entries(metadataRef.current)
       .filter(([, value]) => isVersionMetadataFresh(value)));
     setMetadata(metadataRef.current);
     const loadVisibleMetadata = async () => {
       for (const versionId of visibleVersions) {
-        if (!active) return;
-        if (isVersionMetadataFresh(metadataRef.current[versionId]) || failedRef.current.has(versionId)) continue;
-        try {
-          const requestAccount = latest.current.account;
-          const result = await getVersionMetadata(requestAccount, app, versionId);
-          if (!active) return;
-          await saveCookies(requestAccount, result.updatedCookies);
-          if (!active) return;
-          const cached = cacheVersionMetadata(app.id, account.store, versionId, result.metadata);
-          metadataRef.current = { ...metadataRef.current, [versionId]: cached };
-          setMetadata(metadataRef.current);
-        } catch {
-          if (!active) return;
-          failedRef.current.add(versionId);
-          setFailed([...failedRef.current]);
-        }
+        if (!scope.active) return;
+        if (isVersionMetadataFresh(metadataRef.current[versionId]) || failedRef.current.has(versionId) || pendingMetadata.current.has(versionId)) continue;
+        pendingMetadata.current.add(versionId);
+        setLoadingMetadata([...pendingMetadata.current]);
+        await loadMetadata(versionId, scope);
       }
     };
     // Wait until paging settles so intermediate pages never start their lookups.
-    const timer = window.setTimeout(() => {
-      if (active) queue.current = queue.current.then(loadVisibleMetadata);
-    }, METADATA_LOAD_DELAY_MS);
+    const timer = autoFetchVersionNumbers ? window.setTimeout(() => {
+      if (scope.active) queue.current = queue.current.then(loadVisibleMetadata);
+    }, METADATA_LOAD_DELAY_MS) : undefined;
     return () => {
-      active = false;
+      scope.active = false;
       window.clearTimeout(timer);
     };
-  }, [versions, page, revision, retryRevision]);
+  }, [versions, page, revision, autoFetchVersionNumbers]);
 
-  function retryMetadata(versionId: string) {
+  function requestMetadata(versionId: string) {
+    const scope = metadataScope.current;
+    if (!scope.active || pendingMetadata.current.has(versionId) || isVersionMetadataFresh(metadataRef.current[versionId])) return;
     failedRef.current.delete(versionId);
     setFailed([...failedRef.current]);
-    setRetryRevision((value) => value + 1);
+    pendingMetadata.current.add(versionId);
+    setLoadingMetadata([...pendingMetadata.current]);
+    // Manual requests share the queue without interrupting another requested row.
+    queue.current = queue.current.then(() => loadMetadata(versionId, scope));
   }
 
   return {
     versions,
-    visibleVersions: versions.slice(page * VERSION_PAGE_SIZE, (page + 1) * VERSION_PAGE_SIZE),
+    visibleVersions: autoFetchVersionNumbers
+      ? versions.slice(page * VERSION_PAGE_SIZE, (page + 1) * VERSION_PAGE_SIZE)
+      : versions,
     metadata,
+    autoFetchVersionNumbers,
+    loadingMetadata,
     failed,
     loading,
     error,
     page,
-    pageCount: Math.ceil(versions.length / VERSION_PAGE_SIZE),
+    pageCount: autoFetchVersionNumbers ? Math.ceil(versions.length / VERSION_PAGE_SIZE) : 1,
     setPage,
     refresh: () => setRevision((value) => value + 1),
-    retryMetadata,
+    requestMetadata,
   };
 }

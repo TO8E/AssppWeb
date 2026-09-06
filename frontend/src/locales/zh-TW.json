@@ -108,7 +108,8 @@
       "pagination": "版本分頁",
       "previous": "上一頁",
       "next": "下一頁",
-      "page": "第 {{current}} / {{total}} 頁"
+      "page": "第 {{current}} / {{total}} 頁",
+      "fetchNumber": "取得版本號"
     }
   },
   "accounts": {
@@ -310,6 +311,10 @@
       "description": "Asspp Web —— Apple 應用程式與授權管理。",
       "buildCommit": "構建提交",
       "buildDate": "構建日期"
+    },
+    "versionNumbers": {
+      "title": "自動取得版本號",
+      "description": "關閉後顯示全部版本，按需點擊取得版本號；開啟後分頁自動取得。已快取的版本號會直接顯示。"
     }
   },
   "countries": {

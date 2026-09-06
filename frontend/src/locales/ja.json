@@ -108,7 +108,8 @@
       "pagination": "バージョンのページ",
       "previous": "前へ",
       "next": "次へ",
-      "page": "{{current}} / {{total}} ページ"
+      "page": "{{current}} / {{total}} ページ",
+      "fetchNumber": "バージョン番号を取得"
     }
   },
   "accounts": {
@@ -310,6 +311,10 @@
       "description": "Asspp Web — Appleアプリとライセンスの管理。",
       "buildCommit": "ビルドコミット",
       "buildDate": "ビルド日時"
+    },
+    "versionNumbers": {
+      "title": "バージョン番号を自動取得",
+      "description": "オフの場合はすべてのバージョンを表示し、クリックした番号だけ取得します。オンの場合はページごとに自動取得します。キャッシュ済みの番号はすぐに表示されます。"
     }
   },
   "countries": {

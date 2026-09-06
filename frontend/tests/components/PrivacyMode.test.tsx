@@ -65,7 +65,7 @@ beforeEach(async () => {
   await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } }, interpolation: { escapeValue: false } });
   await originalLoad();
   useAccountsStore.setState({ accounts: [account, second], loading: false, loadAccounts: vi.fn().mockResolvedValue(undefined) });
-  useSettingsStore.setState({ privacyMode: false });
+  useSettingsStore.setState({ privacyMode: false, autoFetchVersionNumbers: false });
   useToastStore.setState({ toasts: [] });
   useSapStore.setState({ stage: 'idle', error: null });
   mocks.tasks = [task];
@@ -84,13 +84,28 @@ describe('privacy mode display coverage', () => {
     wrap(<SettingsPage />);
     await screen.findByText('/private/server/data');
     fireEvent.click(screen.getByRole('switch', { name: '隐私模式' }));
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('switch', { name: '隐私模式' })).toHaveAttribute('aria-checked', 'true');
     expect(screen.queryByText('/private/server/data')).not.toBeInTheDocument();
     expect(screen.queryByText('https://private-server.test')).not.toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem('asspp-settings')!).state.privacyMode).toBe(true);
     expect(JSON.stringify(useAccountsStore.getState().accounts)).toBe(before);
-    fireEvent.click(screen.getByRole('switch'));
+    fireEvent.click(screen.getByRole('switch', { name: '隐私模式' }));
     expect(screen.getByText('/private/server/data')).toBeInTheDocument();
+  });
+
+  it('offers a default-off automatic version lookup switch independently of privacy mode', async () => {
+    const before = JSON.stringify(useAccountsStore.getState().accounts);
+    wrap(<SettingsPage />);
+    await screen.findByText('/private/server/data');
+    const toggle = screen.getByRole('switch', { name: '自动获取版本号' });
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-checked', 'true');
+    expect(JSON.parse(localStorage.getItem('asspp-settings')!).state.autoFetchVersionNumbers).toBe(true);
+    expect(useSettingsStore.getState().privacyMode).toBe(false);
+    expect(JSON.stringify(useAccountsStore.getState().accounts)).toBe(before);
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
   });
 
   it('masks account cards, tooltips and links while keeping numbered aliases', async () => {

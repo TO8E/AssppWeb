@@ -108,7 +108,8 @@
       "pagination": "Version pages",
       "previous": "Previous",
       "next": "Next",
-      "page": "Page {{current}} of {{total}}"
+      "page": "Page {{current}} of {{total}}",
+      "fetchNumber": "Fetch version number"
     }
   },
   "accounts": {
@@ -310,6 +311,10 @@
       "description": "Asspp Web — Apple app and license manager.",
       "buildCommit": "Build Commit",
       "buildDate": "Build Date"
+    },
+    "versionNumbers": {
+      "title": "Fetch version numbers automatically",
+      "description": "When off, show all versions and fetch numbers on demand. When on, load numbers automatically by page. Cached numbers appear immediately."
     }
   },
   "countries": {

@@ -108,7 +108,8 @@
       "pagination": "버전 페이지",
       "previous": "이전",
       "next": "다음",
-      "page": "{{current}} / {{total}} 페이지"
+      "page": "{{current}} / {{total}} 페이지",
+      "fetchNumber": "버전 번호 가져오기"
     }
   },
   "accounts": {
@@ -310,6 +311,10 @@
       "description": "Asspp Web — Apple 앱·라이선스 관리.",
       "buildCommit": "빌드 커밋",
       "buildDate": "빌드 날짜"
+    },
+    "versionNumbers": {
+      "title": "버전 번호 자동 가져오기",
+      "description": "끄면 모든 버전을 표시하고 클릭한 버전 번호만 가져옵니다. 켜면 페이지별로 자동으로 가져옵니다. 캐시된 번호는 바로 표시됩니다."
     }
   },
   "countries": {

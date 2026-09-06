@@ -135,18 +135,21 @@ function VersionList({ app, account, updateAccount, downloadingVersion, onDownlo
             {history.visibleVersions.map((versionId) => {
               const meta = history.metadata[versionId];
               const isDownloading = downloadingVersion === versionId;
+              const isLoadingMetadata = history.loadingMetadata.includes(versionId);
+              const metadataFailed = history.failed.includes(versionId);
+              const canFetchMetadata = !isLoadingMetadata && (!history.autoFetchVersionNumbers || metadataFailed);
               return (
                 <div key={versionId} className="flex min-w-0 items-center justify-between gap-3 p-4">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-gray-900 [overflow-wrap:anywhere] dark:text-white">
                       {meta ? `v${meta.displayVersion}` : `ID: ${versionId}`}
                     </p>
-                    {!meta && (history.failed.includes(versionId) ? (
+                    {!meta && (canFetchMetadata ? (
                       <button
-                        onClick={() => history.retryMetadata(versionId)}
+                        onClick={() => history.requestMetadata(versionId)}
                         className="max-w-full py-1 text-left text-xs text-blue-600 [overflow-wrap:anywhere] transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       >
-                        {t('search.versions.retryDetails')}
+                        {t(metadataFailed ? 'search.versions.retryDetails' : 'search.versions.fetchNumber')}
                       </button>
                     ) : (
                       <span className="text-xs text-gray-400 [overflow-wrap:anywhere] dark:text-gray-500">

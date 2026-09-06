@@ -9,6 +9,7 @@ describe("store/settings", () => {
       defaultCountry: "US",
       defaultEntity: "iPhone",
       privacyMode: false,
+      autoFetchVersionNumbers: false,
     });
   });
 
@@ -47,5 +48,26 @@ describe("store/settings", () => {
     await useSettingsStore.persist.rehydrate();
     expect(useSettingsStore.getState().theme).toBe('dark');
     expect(useSettingsStore.getState().privacyMode).toBe(false);
+  });
+
+  it('defaults to manual version number lookup', () => {
+    expect(useSettingsStore.getInitialState().autoFetchVersionNumbers).toBe(false);
+  });
+
+  it.each([true, false])('persists automatic version lookup as %s', async (enabled) => {
+    useSettingsStore.getState().setAutoFetchVersionNumbers(enabled);
+    const persisted = localStorage.getItem('asspp-settings')!;
+    useSettingsStore.setState({ autoFetchVersionNumbers: !enabled });
+    localStorage.setItem('asspp-settings', persisted);
+    await useSettingsStore.persist.rehydrate();
+    expect(useSettingsStore.getState().autoFetchVersionNumbers).toBe(enabled);
+  });
+
+  it('uses manual lookup when upgrading older settings', async () => {
+    localStorage.setItem('asspp-settings', JSON.stringify({ state: { theme: 'dark', privacyMode: true }, version: 0 }));
+    await useSettingsStore.persist.rehydrate();
+    expect(useSettingsStore.getState().autoFetchVersionNumbers).toBe(false);
+    expect(useSettingsStore.getState().privacyMode).toBe(true);
+    expect(useSettingsStore.getState().theme).toBe('dark');
   });
 });

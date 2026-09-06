@@ -33,6 +33,8 @@ export default function SettingsPage() {
   const { t, i18n } = useTranslation();
   const privacyMode = useSettingsStore((state) => state.privacyMode);
   const setPrivacyMode = useSettingsStore((state) => state.setPrivacyMode);
+  const autoFetchVersionNumbers = useSettingsStore((state) => state.autoFetchVersionNumbers);
+  const setAutoFetchVersionNumbers = useSettingsStore((state) => state.setAutoFetchVersionNumbers);
   const { accounts, addAccount, updateAccount } = useAccountsStore();
   const addToast = useToastStore((s) => s.addToast);
 
@@ -198,6 +200,30 @@ export default function SettingsPage() {
               className={`relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ${privacyMode ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}
             >
               <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white transition-transform ${privacyMode ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+          </div>
+        </section>
+
+        <section className="min-w-0 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h2 id="auto-version-numbers-label" className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('settings.versionNumbers.title')}
+              </h2>
+              <p id="auto-version-numbers-description" className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('settings.versionNumbers.description')}
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={autoFetchVersionNumbers}
+              aria-labelledby="auto-version-numbers-label"
+              aria-describedby="auto-version-numbers-description"
+              onClick={() => setAutoFetchVersionNumbers(!autoFetchVersionNumbers)}
+              className={`relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ${autoFetchVersionNumbers ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+            >
+              <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white transition-transform ${autoFetchVersionNumbers ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </div>
         </section>

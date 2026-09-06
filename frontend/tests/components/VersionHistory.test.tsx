@@ -7,6 +7,7 @@ import { listVersions } from '../../src/apple/versionFinder';
 import { getVersionMetadata } from '../../src/apple/versionLookup';
 import { useAccountsStore } from '../../src/store/accounts';
 import { useSettingsStore } from '../../src/store/settings';
+import { cacheVersionMetadata } from '../../src/utils/versionMetadataCache';
 import type { Account, Software } from '../../src/types';
 
 const mocks = vi.hoisted(() => ({ startDownload: vi.fn(), toastDownloadError: vi.fn() }));
@@ -56,7 +57,7 @@ beforeEach(async () => {
       }));
     }),
   });
-  useSettingsStore.setState({ privacyMode: false });
+  useSettingsStore.setState({ privacyMode: false, autoFetchVersionNumbers: true });
   vi.mocked(listVersions).mockResolvedValue({ versions: ['103', '102', '101'], updatedCookies: [] });
   vi.mocked(getVersionMetadata).mockImplementation(async (current, _app, versionId) => ({
     metadata: { displayVersion: `16.${versionId}`, releaseDate: '2011-09-08T22:19:39Z' },
@@ -268,5 +269,143 @@ describe('VersionHistory automatic version labels', () => {
     await screen.findByText('v16.101');
     fireEvent.click(screen.getAllByRole('button', { name: 'search.versions.download' })[0]);
     await waitFor(() => expect(mocks.startDownload).toHaveBeenCalledWith(account, app, '103'));
+  });
+});
+
+describe('VersionHistory manual version labels', () => {
+  beforeEach(() => useSettingsStore.setState({ autoFetchVersionNumbers: false }));
+
+  it('only looks up the selected row after an explicit click', async () => {
+    vi.useFakeTimers();
+    await act(async () => { renderHistory(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(listVersions).toHaveBeenCalledOnce();
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    expect(screen.queryByText('search.versions.loadingDetails')).not.toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })[0]);
+    });
+    expect(screen.getByText('v16.103')).toBeInTheDocument();
+    expect(vi.mocked(getVersionMetadata).mock.calls.map(([, , id]) => id)).toEqual(['103']);
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(2);
+  });
+
+  it('shows all versions without pagination and does not look up numbers on refresh', async () => {
+    vi.mocked(listVersions).mockResolvedValue({
+      versions: Array.from({ length: 25 }, (_, i) => String(125 - i)), updatedCookies: [],
+    });
+    vi.useFakeTimers();
+    await act(async () => { renderHistory(); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(screen.getByText('ID: 125')).toBeInTheDocument();
+    expect(screen.getByText('ID: 101')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'search.versions.pagination' })).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(25);
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'search.versions.refresh' })); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(listVersions).toHaveBeenCalledTimes(2);
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+  });
+
+  it('shows previously cached numbers immediately in manual mode', async () => {
+    cacheVersionMetadata(app.id, account.store, '103', { displayVersion: '16.103' });
+    renderHistory();
+    await screen.findByText('v16.103');
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(2);
+  });
+
+  it('queues distinct manual clicks without duplicating or interrupting requests', async () => {
+    const pending = deferred<Awaited<ReturnType<typeof getVersionMetadata>>>();
+    vi.mocked(getVersionMetadata).mockReturnValueOnce(pending.promise);
+    renderHistory();
+    const buttons = await screen.findAllByRole('button', { name: 'search.versions.fetchNumber' });
+    fireEvent.click(buttons[0]);
+    fireEvent.click(buttons[1]);
+    await waitFor(() => expect(getVersionMetadata).toHaveBeenCalledOnce());
+    expect(screen.getAllByText('search.versions.loadingDetails')).toHaveLength(2);
+    await act(async () => { pending.resolve({ metadata: { displayVersion: '16.103' }, updatedCookies: [] }); });
+    await screen.findByText('v16.102');
+    expect(vi.mocked(getVersionMetadata).mock.calls.map(([, , id]) => id)).toEqual(['103', '102']);
+    expect(screen.getByText('v16.103')).toBeInTheDocument();
+  });
+
+  it('retries only the manually selected failed row', async () => {
+    vi.mocked(getVersionMetadata).mockRejectedValueOnce(new Error('Temporary failure'));
+    renderHistory();
+    fireEvent.click((await screen.findAllByRole('button', { name: 'search.versions.fetchNumber' }))[0]);
+    fireEvent.click(await screen.findByRole('button', { name: 'search.versions.retryDetails' }));
+    await screen.findByText('v16.103');
+    expect(vi.mocked(getVersionMetadata).mock.calls.map(([, , id]) => id)).toEqual(['103', '103']);
+  });
+
+  it('cancels pending manual requests when leaving the page', async () => {
+    const pending = deferred<Awaited<ReturnType<typeof getVersionMetadata>>>();
+    vi.mocked(getVersionMetadata).mockReturnValueOnce(pending.promise);
+    const view = renderHistory();
+    const buttons = await screen.findAllByRole('button', { name: 'search.versions.fetchNumber' });
+    fireEvent.click(buttons[0]);
+    fireEvent.click(buttons[1]);
+    await waitFor(() => expect(getVersionMetadata).toHaveBeenCalledOnce());
+    view.unmount();
+    await act(async () => { pending.resolve({ metadata: { displayVersion: '16.103' }, updatedCookies: [updatedCookie] }); });
+    expect(getVersionMetadata).toHaveBeenCalledOnce();
+    expect(useAccountsStore.getState().updateAccount).not.toHaveBeenCalled();
+  });
+});
+
+describe('VersionHistory mode changes', () => {
+  it('cancels automatic requests when disabled during the paging delay', async () => {
+    vi.useFakeTimers();
+    await act(async () => { renderHistory(); });
+    act(() => useSettingsStore.getState().setAutoFetchVersionNumbers(false));
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(3);
+  });
+
+  it('stops the automatic queue after an in-flight request when disabled', async () => {
+    const pending = deferred<Awaited<ReturnType<typeof getVersionMetadata>>>();
+    vi.mocked(getVersionMetadata).mockReturnValueOnce(pending.promise);
+    renderHistory();
+    await waitFor(() => expect(getVersionMetadata).toHaveBeenCalledOnce());
+    act(() => useSettingsStore.getState().setAutoFetchVersionNumbers(false));
+    await act(async () => { pending.resolve({ metadata: { displayVersion: '16.103' }, updatedCookies: [updatedCookie] }); });
+    expect(getVersionMetadata).toHaveBeenCalledOnce();
+    expect(useAccountsStore.getState().updateAccount).not.toHaveBeenCalled();
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(3);
+  });
+
+  it('automatically loads only uncached labels after being enabled', async () => {
+    useSettingsStore.setState({ autoFetchVersionNumbers: false });
+    cacheVersionMetadata(app.id, account.store, '103', { displayVersion: '16.103' });
+    vi.useFakeTimers();
+    await act(async () => { renderHistory(); });
+    expect(screen.getByText('v16.103')).toBeInTheDocument();
+    act(() => useSettingsStore.getState().setAutoFetchVersionNumbers(true));
+    await act(async () => { await vi.advanceTimersByTimeAsync(349); });
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+    expect(vi.mocked(getVersionMetadata).mock.calls.map(([, , id]) => id)).toEqual(['102', '101']);
+    expect(listVersions).toHaveBeenCalledOnce();
+  });
+
+  it('switches from a later automatic page to the full manual list and back to page one', async () => {
+    vi.mocked(listVersions).mockResolvedValue({
+      versions: Array.from({ length: 25 }, (_, i) => String(125 - i)), updatedCookies: [],
+    });
+    vi.useFakeTimers();
+    await act(async () => { renderHistory(); });
+    fireEvent.click(screen.getByRole('button', { name: 'search.versions.next' }));
+    expect(screen.getByText('ID: 101')).toBeInTheDocument();
+    act(() => useSettingsStore.getState().setAutoFetchVersionNumbers(false));
+    expect(screen.getByText('ID: 125')).toBeInTheDocument();
+    expect(screen.getByText('ID: 101')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'search.versions.pagination' })).not.toBeInTheDocument();
+    act(() => useSettingsStore.getState().setAutoFetchVersionNumbers(true));
+    expect(screen.getByText('ID: 125')).toBeInTheDocument();
+    expect(screen.queryByText('ID: 101')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'search.versions.previous' })).toBeDisabled();
   });
 });
