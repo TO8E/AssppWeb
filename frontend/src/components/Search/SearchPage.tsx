@@ -71,7 +71,7 @@ export default function SearchPage() {
     <PageContainer title={t("search.title")}>
       <form
         onSubmit={handleSubmit}
-        className="mb-5 space-y-3 border-b border-gray-100 pb-4 dark:border-gray-800"
+        className="mb-4 space-y-3"
       >
         <SearchField value={term} onChange={(value) => setSearchParam({ term: value })} placeholder={t('search.placeholder')} buttonLabel={loading ? t('search.searching') : t('search.button')} busy={loading} />
         <div className="flex w-full gap-3 sm:max-w-md">
