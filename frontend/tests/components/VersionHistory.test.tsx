@@ -84,7 +84,7 @@ describe('VersionHistory automatic version labels', () => {
   it('reuses cached labels after leaving and returning without storing credentials', async () => {
     const view = renderHistory();
     await screen.findByText('v16.101');
-    const cached = localStorage.getItem('asspp-version-metadata-v1')!;
+    const cached = localStorage.getItem('asspp-version-metadata-v2')!;
     expect(cached).toContain('16.103');
     expect(cached).not.toMatch(/example.test|secret-|releaseDate|2011/);
     view.unmount();
@@ -205,6 +205,19 @@ describe('VersionHistory automatic version labels', () => {
     await screen.findByText('v16.104');
     expect(getVersionMetadata).toHaveBeenCalledTimes(4);
     expect(screen.queryByText('v16.101')).not.toBeInTheDocument();
+  });
+
+  it('refetches expired in-memory and stored version labels after 30 days', async () => {
+    renderHistory();
+    await screen.findByText('v16.101');
+    const later = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    vi.spyOn(Date, 'now').mockReturnValue(later);
+    fireEvent.click(screen.getByRole('button', { name: 'search.versions.refresh' }));
+    await waitFor(() => expect(getVersionMetadata).toHaveBeenCalledTimes(6));
+    await screen.findByText('v16.101');
+    const entries = JSON.parse(localStorage.getItem('asspp-version-metadata-v2')!);
+    expect(entries).toHaveLength(3);
+    expect(entries.every((entry: [string, string, number]) => entry[2] === later)).toBe(true);
   });
 
   it('masks account errors in privacy mode and allows a list retry', async () => {

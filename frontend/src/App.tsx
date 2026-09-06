@@ -8,6 +8,7 @@ import GlobalDownloadNotifier from './components/common/GlobalDownloadNotifier';
 import ToastContainer from './components/common/ToastContainer';
 import PasswordGate from './components/Auth/PasswordGate';
 import { useSettingsStore } from './store/settings';
+import { startVersionMetadataCacheCleanup } from './utils/versionMetadataCache';
 
 const HomePage = lazy(() => import('./components/Welcome/HomePage'));
 const AccountList = lazy(() => import('./components/Account/AccountList'));
@@ -44,6 +45,8 @@ function Loading() {
 
 export default function App() {
   const theme = useSettingsStore((s) => s.theme);
+
+  useEffect(startVersionMetadataCacheCleanup, []);
 
   useEffect(() => {
     const root = window.document.documentElement;

@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { mergeCookies } from '../apple/cookies';
 import { listVersions } from '../apple/versionFinder';
 import { getVersionMetadata } from '../apple/versionLookup';
-import { cacheVersionMetadata, readVersionMetadataCache } from '../utils/versionMetadataCache';
-import type { Account, Cookie, Software, VersionMetadata } from '../types';
+import { cacheVersionMetadata, isVersionMetadataFresh, readVersionMetadataCache } from '../utils/versionMetadataCache';
+import type { CachedVersionMetadata } from '../utils/versionMetadataCache';
+import type { Account, Cookie, Software } from '../types';
 
 export const VERSION_PAGE_SIZE = 20;
 
@@ -17,7 +18,7 @@ export function useVersionHistory(
   latest.current = { account, updateAccount };
   const queue = useRef(Promise.resolve());
   const [versions, setVersions] = useState<string[]>([]);
-  const [metadata, setMetadata] = useState<Record<string, VersionMetadata>>(
+  const [metadata, setMetadata] = useState<Record<string, CachedVersionMetadata>>(
     () => readVersionMetadataCache(app.id, account.store),
   );
   const metadataRef = useRef(metadata);
@@ -71,18 +72,22 @@ export function useVersionHistory(
   useEffect(() => {
     let active = true;
     const visibleVersions = versions.slice(page * VERSION_PAGE_SIZE, (page + 1) * VERSION_PAGE_SIZE);
+    // A long-lived tab must not reuse expired labels from its in-memory state.
+    metadataRef.current = Object.fromEntries(Object.entries(metadataRef.current)
+      .filter(([, value]) => isVersionMetadataFresh(value)));
+    setMetadata(metadataRef.current);
     queue.current = queue.current.then(async () => {
       for (const versionId of visibleVersions) {
         if (!active) return;
-        if (metadataRef.current[versionId] || failedRef.current.has(versionId)) continue;
+        if (isVersionMetadataFresh(metadataRef.current[versionId]) || failedRef.current.has(versionId)) continue;
         try {
           const requestAccount = latest.current.account;
           const result = await getVersionMetadata(requestAccount, app, versionId);
           if (!active) return;
           await saveCookies(requestAccount, result.updatedCookies);
           if (!active) return;
-          metadataRef.current = { ...metadataRef.current, [versionId]: result.metadata };
-          cacheVersionMetadata(app.id, account.store, versionId, result.metadata);
+          const cached = cacheVersionMetadata(app.id, account.store, versionId, result.metadata);
+          metadataRef.current = { ...metadataRef.current, [versionId]: cached };
           setMetadata(metadataRef.current);
         } catch {
           if (!active) return;
