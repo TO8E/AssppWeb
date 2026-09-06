@@ -122,7 +122,7 @@ export default function AccountDetail() {
   return (
     <PageContainer title={t("accounts.detail.title")}>
       <div className="max-w-2xl space-y-6">
-        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+        <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
           <dl className="divide-y divide-gray-100 dark:divide-gray-800">
             <DetailRow
               label={t("accounts.detail.name")}
@@ -155,7 +155,7 @@ export default function AccountDetail() {
         </section>
 
         {needsCode && (
-          <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <label
               htmlFor="reauth-code"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -179,7 +179,7 @@ export default function AccountDetail() {
               <button
                 onClick={handleReauth}
                 disabled={reauthing || !reauthCode}
-                className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {reauthing && <Spinner />}
                 {t("accounts.detail.verify")}
@@ -193,7 +193,7 @@ export default function AccountDetail() {
           <button
             onClick={handleReauth}
             disabled={reauthing}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-11 items-center gap-2 rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {reauthing && <Spinner />}
             {t("accounts.detail.reauth")}

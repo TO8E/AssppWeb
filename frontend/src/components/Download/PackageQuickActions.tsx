@@ -155,7 +155,7 @@ export default function PackageQuickActions({
             role="tooltip"
             className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 opacity-0 transition-opacity duration-200 md:invisible md:block md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100"
           >
-            <div className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 shadow-xl dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+            <div className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
               <QRCodeSVG
                 value={installInfo.installUrl}
                 size={128}

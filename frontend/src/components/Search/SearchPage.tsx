@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
 import AppIcon from "../common/AppIcon";
 import CountrySelect from "../common/CountrySelect";
+import { ChevronRightIcon } from '../common/icons';
 import { useSearch } from "../../hooks/useSearch";
 import { useAccounts } from "../../hooks/useAccounts";
 import { useSettingsStore } from "../../store/settings";
@@ -67,20 +68,21 @@ export default function SearchPage() {
     <PageContainer title={t("search.title")}>
       <form
         onSubmit={handleSubmit}
-        className="mb-8 space-y-3 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-4"
+        className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-3 dark:bg-gray-900 sm:p-4"
       >
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex min-w-0 items-center gap-2">
           <input
             type="text"
             value={term}
             onChange={(e) => setSearchParam({ term: e.target.value })}
             placeholder={t("search.placeholder")}
-            className="min-h-11 flex-1 rounded-2xl border-0 bg-gray-100 px-4 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400"
+            aria-label={t("search.placeholder")}
+            className="min-h-11 min-w-0 flex-1 rounded-md border-0 bg-gray-100 px-4 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500/40 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400"
           />
           <button
             type="submit"
             disabled={loading || !term.trim()}
-            className="min-h-11 whitespace-nowrap rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-11 shrink-0 whitespace-nowrap rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? t("search.searching") : t("search.button")}
           </button>
@@ -106,8 +108,8 @@ export default function SearchPage() {
       </form>
 
       {results.length === 0 && !loading && !error && (
-        <div className="flex flex-col items-center justify-center rounded-3xl bg-white px-6 py-16 text-center shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
-          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-6 py-10 text-center dark:bg-gray-900">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
             <svg
               className="h-8 w-8 text-blue-600 dark:text-blue-400"
               fill="none"
@@ -125,46 +127,36 @@ export default function SearchPage() {
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             {t("search.empty")}
           </h3>
-          <p className="max-w-full whitespace-nowrap text-[clamp(0.5625rem,2.8vw,0.875rem)] leading-relaxed tracking-[-0.015em] text-gray-500 dark:text-gray-400">
+          <p className="max-w-full text-sm leading-relaxed text-gray-500 dark:text-gray-400">
             {t("search.emptyDesc")}
           </p>
         </div>
       )}
 
       {results.length > 0 && (
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
+        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
           <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {results.map((app) => (
               <Link
                 key={app.id}
                 to={`/search/${app.id}`}
                 state={{ app, country: activeCountry }}
-                className="flex items-center gap-4 p-4 transition-colors hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-gray-800/70 dark:active:bg-gray-800"
+                className="flex min-w-0 items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-gray-800/70 dark:active:bg-gray-800"
               >
-                <AppIcon url={app.artworkUrl} name={app.name} size="md" />
+                <AppIcon url={app.artworkUrl} name={app.name} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-gray-900 dark:text-white">
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                     {app.name}
                   </p>
-                  <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                    {app.artistName}
-                  </p>
-                  <div className="mt-1 flex items-center gap-2 overflow-hidden text-xs text-gray-400 dark:text-gray-500">
+                  <div className="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <span className="min-w-0 truncate">{app.artistName}</span>
                     <span className="shrink-0">
                       {app.formattedPrice ?? t("search.free")}
                     </span>
-                    <span className="truncate">{app.primaryGenreName}</span>
-                    <span className="shrink-0">
-                      ★ {app.averageUserRating.toFixed(1)}
-                    </span>
+                    <span className="shrink-0">v{app.version}</span>
                   </div>
                 </div>
-                <span
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xl text-blue-600 dark:bg-gray-800 dark:text-blue-400"
-                  aria-hidden="true"
-                >
-                  ›
-                </span>
+                <ChevronRightIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
               </Link>
             ))}
           </div>

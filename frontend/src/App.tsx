@@ -29,10 +29,10 @@ function Loading() {
 
   return (
     <div
-      className="flex min-h-[40vh] items-center justify-center px-6"
+      className="flex min-h-24 items-center justify-center px-6"
       role="status"
     >
-      <div className="inline-flex items-center gap-2.5 rounded-full border border-gray-200/80 bg-white/90 px-4 py-2.5 text-sm font-medium text-gray-500 shadow-sm dark:border-gray-800 dark:bg-gray-900/90 dark:text-gray-400">
+      <div className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
         <span
           aria-hidden="true"
           className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600/25 border-t-blue-600 dark:border-blue-500/25 dark:border-t-blue-500"

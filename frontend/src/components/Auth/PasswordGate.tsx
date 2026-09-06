@@ -109,7 +109,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
 
   return (
     <GateBackdrop>
-      <main className="w-full max-w-md rounded-[2rem] border border-white/70 bg-white/85 p-6 backdrop-blur-2xl sm:p-8 dark:border-gray-800/80 dark:bg-gray-900/85">
+      <main className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
         <div className="text-center">
           <AppMark />
           <h1 className="mt-5 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
@@ -138,7 +138,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
               aria-describedby={error ? 'access-password-error' : undefined}
               autoComplete="current-password"
               autoFocus
-              className="min-h-12 w-full rounded-2xl border border-gray-200 bg-gray-100/80 py-3 pl-11 pr-4 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800/80 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:bg-gray-800"
+              className="min-h-11 w-full rounded-md border border-gray-300 bg-white py-2.5 pl-11 pr-4 text-base text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-400"
             />
           </div>
 
@@ -156,7 +156,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
             type="submit"
             disabled={submitting || !password}
             aria-busy={submitting}
-            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-gray-900"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-gray-900"
           >
             {submitting && <Spinner />}
             {submitting ? t('auth.verifying') : t('auth.submit')}
@@ -169,15 +169,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
 
 function GateBackdrop({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-gray-100 px-4 py-10 dark:bg-gray-950">
-      <div
-        aria-hidden="true"
-        className="absolute -left-32 -top-36 h-96 w-96 rounded-full bg-blue-300/40 blur-3xl dark:bg-blue-900/30"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -bottom-40 -right-28 h-96 w-96 rounded-full bg-purple-300/30 blur-3xl dark:bg-purple-900/20"
-      />
+    <div className="flex min-h-[100svh] items-center justify-center bg-gray-50 px-4 py-10 dark:bg-gray-950">
       <div className="relative z-10 flex w-full items-center justify-center">
         {children}
       </div>
@@ -187,18 +179,7 @@ function GateBackdrop({ children }: { children: ReactNode }) {
 
 function AppMark() {
   return (
-    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-gradient-to-br from-blue-400 via-blue-500 to-blue-700 text-white">
-      <svg
-        aria-hidden="true"
-        className="h-11 w-11"
-        fill="none"
-        viewBox="0 0 48 48"
-        stroke="currentColor"
-        strokeWidth={4}
-      >
-        <path strokeLinecap="round" d="M13 35 27 11M21 35h16M12 27h20" />
-      </svg>
-    </div>
+    <img src="/icon-192x192.png" alt="" className="mx-auto h-12 w-12 rounded-lg ring-1 ring-black/5 dark:ring-white/10" />
   );
 }
 

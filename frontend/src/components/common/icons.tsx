@@ -4,9 +4,27 @@ interface IconProps {
   className?: string;
 }
 
+export function ChevronRightIcon({ className }: IconProps) {
+  return (
+    <svg aria-hidden="true" focusable="false" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ className }: IconProps) {
+  return (
+    <svg aria-hidden="true" focusable="false" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m6 6 12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
 export function HomeIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -25,6 +43,8 @@ export function HomeIcon({ className }: IconProps) {
 export function AccountsIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -43,6 +63,8 @@ export function AccountsIcon({ className }: IconProps) {
 export function SearchIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -61,6 +83,8 @@ export function SearchIcon({ className }: IconProps) {
 export function DownloadsIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -79,6 +103,8 @@ export function DownloadsIcon({ className }: IconProps) {
 export function SettingsIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -102,6 +128,8 @@ export function SettingsIcon({ className }: IconProps) {
 export function SunIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -120,6 +148,8 @@ export function SunIcon({ className }: IconProps) {
 export function MoonIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -138,6 +168,8 @@ export function MoonIcon({ className }: IconProps) {
 export function SystemIcon({ className }: IconProps) {
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       className={className}
       fill="none"
       viewBox="0 0 24 24"

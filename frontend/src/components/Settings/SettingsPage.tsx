@@ -197,9 +197,11 @@ export default function SettingsPage() {
               aria-labelledby="privacy-mode-label"
               aria-describedby="privacy-mode-description"
               onClick={() => setPrivacyMode(!privacyMode)}
-              className={`relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ${privacyMode ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+              className="-my-2 inline-flex h-11 w-12 shrink-0 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900"
             >
-              <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white transition-transform ${privacyMode ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span aria-hidden="true" className={`flex h-7 w-12 items-center rounded-full transition-colors ${privacyMode ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                <span className={`h-5 w-5 rounded-full bg-white transition-transform ${privacyMode ? 'translate-x-6' : 'translate-x-1'}`} />
+              </span>
             </button>
           </div>
         </section>
@@ -221,9 +223,11 @@ export default function SettingsPage() {
               aria-labelledby="auto-version-numbers-label"
               aria-describedby="auto-version-numbers-description"
               onClick={() => setAutoFetchVersionNumbers(!autoFetchVersionNumbers)}
-              className={`relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 ${autoFetchVersionNumbers ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+              className="-my-2 inline-flex h-11 w-12 shrink-0 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900"
             >
-              <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white transition-transform ${autoFetchVersionNumbers ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span aria-hidden="true" className={`flex h-7 w-12 items-center rounded-full transition-colors ${autoFetchVersionNumbers ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                <span className={`h-5 w-5 rounded-full bg-white transition-transform ${autoFetchVersionNumbers ? 'translate-x-6' : 'translate-x-1'}`} />
+              </span>
             </button>
           </div>
         </section>

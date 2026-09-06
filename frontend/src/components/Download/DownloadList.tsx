@@ -221,10 +221,10 @@ export default function DownloadList() {
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`flex h-9 w-full min-w-0 items-center justify-center rounded-full px-2.5 text-center text-[clamp(0.75rem,3.6vw,0.875rem)] font-semibold leading-tight transition-colors ${
+            className={`flex min-h-11 w-full min-w-0 items-center justify-center rounded-md border px-2.5 py-2 text-center text-xs font-medium leading-tight transition-colors sm:text-sm ${
               filter === status
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-600 shadow-sm ring-1 ring-black/5 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:ring-white/10 dark:hover:bg-gray-800"
+                ? "border-blue-600 bg-blue-600 text-white"
+                : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
             }`}
           >
             {t(`downloads.status.${status}`)}

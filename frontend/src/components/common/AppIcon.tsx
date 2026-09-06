@@ -13,7 +13,7 @@ const sizeClasses = {
 };
 
 const surfaceClassName =
-  'shrink-0 rounded-[22%] ring-1 ring-black/5 shadow-sm shadow-gray-950/10 dark:ring-white/10 dark:shadow-black/30';
+  'shrink-0 rounded-[22%] ring-1 ring-black/5 dark:ring-white/10';
 
 export default function AppIcon({ url, name, size = 'md' }: AppIconProps) {
   const [failed, setFailed] = useState(false);
@@ -21,7 +21,7 @@ export default function AppIcon({ url, name, size = 'md' }: AppIconProps) {
   if (!url || failed) {
     return (
       <div
-        className={`${sizeClasses[size]} ${surfaceClassName} flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 text-white`}
+        className={`${sizeClasses[size]} ${surfaceClassName} flex items-center justify-center bg-blue-600 text-white`}
         role="img"
         aria-label={name}
       >

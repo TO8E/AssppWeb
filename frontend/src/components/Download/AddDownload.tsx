@@ -146,7 +146,7 @@ export default function AddDownload() {
       <div className="min-w-0 space-y-6">
         <form
           onSubmit={handleLookup}
-          className="min-w-0 space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-5"
+          className="min-w-0 space-y-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-4 dark:bg-gray-900 sm:p-5"
         >
           <div className="min-w-0">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -164,7 +164,7 @@ export default function AddDownload() {
               <button
                 type="submit"
                 disabled={isLoading || !bundleId.trim()}
-                className="min-h-11 min-w-0 whitespace-normal break-words rounded-full bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
+                className="min-h-11 min-w-0 whitespace-normal break-words rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
               >
                 {loadingAction === "lookup"
                   ? t("downloads.add.lookingUp")
@@ -196,8 +196,8 @@ export default function AddDownload() {
         </form>
 
         {!app && !isLoading && (
-          <div className="flex min-w-0 flex-col items-center justify-center rounded-3xl bg-white px-5 py-14 text-center shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:px-6">
-            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
+          <div className="flex min-w-0 flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-5 py-10 text-center dark:bg-gray-900 sm:px-6">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
               <svg
                 className="h-8 w-8 text-blue-600 dark:text-blue-400"
                 fill="none"
@@ -222,7 +222,7 @@ export default function AddDownload() {
         )}
 
         {app && (
-          <div className="min-w-0 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <div className="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <div className="mb-4 flex min-w-0 items-start gap-4">
               <AppIcon url={app.artworkUrl} name={app.name} size="md" />
               <div className="min-w-0 flex-1">
@@ -294,7 +294,7 @@ export default function AddDownload() {
               <button
                 onClick={handleDownload}
                 disabled={isLoading || !account}
-                className="min-h-11 min-w-0 whitespace-normal break-words rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                className="min-h-11 min-w-0 whitespace-normal break-words rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
                 {loadingAction === "download"
                   ? t("downloads.add.processing")

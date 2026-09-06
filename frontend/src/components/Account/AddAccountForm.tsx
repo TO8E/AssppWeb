@@ -64,7 +64,7 @@ export default function AddAccountForm() {
     <PageContainer title={t("accounts.addForm.title")}>
       <div className="max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <section className="space-y-5 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <section className="space-y-5 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <div>
               <label
                 htmlFor="email"
@@ -166,7 +166,7 @@ export default function AddAccountForm() {
             <button
               type="submit"
               disabled={loading}
-              className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading && <Spinner />}
               {needsCode

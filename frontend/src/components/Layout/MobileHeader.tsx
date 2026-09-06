@@ -8,16 +8,16 @@ export default function MobileHeader() {
   return (
     <>
       {/* Use fixed instead of sticky to prevent PWA overscroll gap, with safe-top / 使用 fixed 替代 sticky 防止 PWA 下拉出现空白缝隙，保留 safe-top */}
-      <header className="safe-top fixed left-0 right-0 top-0 z-40 w-full border-b border-gray-200/70 bg-gray-50/82 shadow-[0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-200 dark:border-gray-800/80 dark:bg-gray-950/82 dark:shadow-[0_1px_0_rgba(255,255,255,0.025)] md:hidden">
-        <div className="grid h-14 grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2 px-4">
+      <header className="app-material safe-top fixed left-0 right-0 top-0 z-40 w-full border-b border-gray-200/80 bg-white/90 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/90 md:hidden">
+        <div className="grid h-14 grid-cols-[2.75rem_1fr_2.75rem] items-center gap-2 px-3">
           <img
             src="/icon-192x192.png"
             alt=""
-            className="h-7 w-7 rounded-[8px] shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+            className="h-7 w-7 justify-self-center rounded-md ring-1 ring-black/5 dark:ring-white/10"
           />
-          <h1 className="truncate text-center text-[17px] font-semibold tracking-[-0.015em] text-gray-900 dark:text-white">
+          <span className="truncate text-center text-base font-semibold tracking-tight text-gray-900 dark:text-white">
             Asspp Web
-          </h1>
+          </span>
           <ThemeToggle />
         </div>
       </header>
@@ -43,7 +43,8 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={cycleTheme}
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/75 text-blue-600 shadow-sm ring-1 ring-gray-200/70 transition-colors hover:bg-white active:bg-gray-100 dark:bg-gray-800/75 dark:text-blue-400 dark:ring-gray-700/80 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-blue-600 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-blue-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+      aria-label={t(`theme.${theme}`)}
       title={t(`theme.${theme}`)}
     >
       {theme === 'light' && <SunIcon className="h-[18px] w-[18px]" />}

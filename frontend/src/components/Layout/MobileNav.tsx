@@ -20,7 +20,7 @@ export default function MobileNav() {
   const { t } = useTranslation();
 
   return (
-    <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200/70 bg-gray-50/84 shadow-[0_-8px_28px_rgba(28,28,30,0.045)] backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-200 dark:border-gray-800/80 dark:bg-gray-950/84 dark:shadow-[0_-8px_28px_rgba(0,0,0,0.22)] md:hidden">
+    <nav className="app-material safe-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200/80 bg-white/90 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/90 md:hidden">
       <div className="flex h-[3.625rem] items-stretch justify-around">
         {navItems.map((item) => (
           <NavLink

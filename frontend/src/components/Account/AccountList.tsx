@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PageContainer from "../Layout/PageContainer";
+import { AccountsIcon, ChevronRightIcon } from '../common/icons';
 import { useAccountRoutes } from '../../hooks/useAccountRoutes';
 import { usePrivacy } from '../../hooks/usePrivacy';
 import { useAccountsStore } from "../../store/accounts";
@@ -23,7 +24,7 @@ export default function AccountList() {
       action={
         <Link
           to="/accounts/add"
-          className="inline-flex min-h-10 items-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+          className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
         >
           {t("accounts.add")}
         </Link>
@@ -34,8 +35,8 @@ export default function AccountList() {
           {t("accounts.loading")}
         </div>
       ) : accounts.length === 0 ? (
-        <div className="my-4 flex flex-col items-center justify-center rounded-3xl bg-white px-6 py-16 text-center shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
-          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
+        <div className="my-4 flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-800 px-6 py-10 text-center dark:bg-gray-900">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950">
             <svg
               className="h-8 w-8 text-blue-600 dark:text-blue-400"
               fill="none"
@@ -53,12 +54,12 @@ export default function AccountList() {
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             {t("accounts.empty")}
           </h3>
-          <p className="mb-6 max-w-full whitespace-nowrap text-[clamp(0.5625rem,2.8vw,0.875rem)] leading-relaxed tracking-[-0.015em] text-gray-500 dark:text-gray-400">
+          <p className="mb-6 max-w-full text-sm leading-relaxed text-gray-500 dark:text-gray-400">
             {t("accounts.emptyDesc")}
           </p>
           <Link
             to="/accounts/add"
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
           >
             <svg
               className="w-4 h-4"
@@ -77,7 +78,7 @@ export default function AccountList() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
+        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
           <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {accounts.map((account) => {
               const countryCode =
@@ -98,8 +99,8 @@ export default function AccountList() {
                     }`
                   }
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-lg font-semibold text-white">
-                    {privacyMode ? "•" : (account.firstName || account.email).charAt(0).toUpperCase()}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-base font-medium text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+                    {privacyMode ? <AccountsIcon className="h-5 w-5" /> : (account.firstName || account.email).charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-gray-900 dark:text-white">
@@ -118,12 +119,7 @@ export default function AccountList() {
                       {privacyMode ? hidden : countryName}
                     </span>
                   </div>
-                  <span
-                    className="text-xl text-gray-300 dark:text-gray-600"
-                    aria-hidden="true"
-                  >
-                    ›
-                  </span>
+                  <ChevronRightIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                 </NavLink>
               );
             })}

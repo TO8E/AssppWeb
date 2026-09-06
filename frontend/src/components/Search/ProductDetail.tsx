@@ -150,7 +150,7 @@ export default function ProductDetail() {
           </Alert>
         )}
 
-        <section className="flex min-w-0 items-start gap-4 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:gap-5 sm:p-6">
+        <section className="flex min-w-0 items-start gap-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:gap-5 sm:p-6">
           <div className="shrink-0">
             <AppIcon url={app.artworkUrl} name={app.name} size="lg" />
           </div>
@@ -189,7 +189,7 @@ export default function ProductDetail() {
             {t("search.product.noAccountsForRegion")}
           </div>
         ) : (
-          <section className="space-y-4 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
+          <section className="space-y-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900">
             <div className="min-w-0">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("search.product.account")}
@@ -246,7 +246,7 @@ export default function ProductDetail() {
           </section>
         )}
 
-        <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+        <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
           <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
             {t("search.product.details")}
           </h2>
@@ -291,7 +291,7 @@ export default function ProductDetail() {
         </section>
 
         {app.description && (
-          <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
               {t("search.product.description")}
             </h2>
@@ -302,7 +302,7 @@ export default function ProductDetail() {
         )}
 
         {app.releaseNotes && (
-          <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
               {t("search.product.releaseNotes")}
             </h2>
@@ -313,7 +313,7 @@ export default function ProductDetail() {
         )}
 
         {app.screenshotUrls && app.screenshotUrls.length > 0 && (
-          <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
+          <section className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 p-5 dark:bg-gray-900 sm:p-6">
             <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
               {t("search.product.screenshots")}
             </h2>
