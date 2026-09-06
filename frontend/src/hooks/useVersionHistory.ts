@@ -7,6 +7,7 @@ import type { CachedVersionMetadata } from '../utils/versionMetadataCache';
 import type { Account, Cookie, Software } from '../types';
 
 export const VERSION_PAGE_SIZE = 20;
+const METADATA_LOAD_DELAY_MS = 350;
 
 // Mount a fresh hook instance when the app or account identity changes.
 export function useVersionHistory(
@@ -76,7 +77,7 @@ export function useVersionHistory(
     metadataRef.current = Object.fromEntries(Object.entries(metadataRef.current)
       .filter(([, value]) => isVersionMetadataFresh(value)));
     setMetadata(metadataRef.current);
-    queue.current = queue.current.then(async () => {
+    const loadVisibleMetadata = async () => {
       for (const versionId of visibleVersions) {
         if (!active) return;
         if (isVersionMetadataFresh(metadataRef.current[versionId]) || failedRef.current.has(versionId)) continue;
@@ -95,8 +96,15 @@ export function useVersionHistory(
           setFailed([...failedRef.current]);
         }
       }
-    });
-    return () => { active = false; };
+    };
+    // Wait until paging settles so intermediate pages never start their lookups.
+    const timer = window.setTimeout(() => {
+      if (active) queue.current = queue.current.then(loadVisibleMetadata);
+    }, METADATA_LOAD_DELAY_MS);
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
   }, [versions, page, revision, retryRevision]);
 
   function retryMetadata(versionId: string) {

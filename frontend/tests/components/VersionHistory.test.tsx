@@ -66,6 +66,7 @@ beforeEach(async () => {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
@@ -109,6 +110,37 @@ describe('VersionHistory automatic version labels', () => {
     fireEvent.click(screen.getByRole('button', { name: 'search.versions.previous' }));
     await screen.findByText('v16.125');
     expect(getVersionMetadata).toHaveBeenCalledTimes(25);
+  });
+
+  it('does not query an intermediate page when quickly paging from 1 through 2 to 3', async () => {
+    vi.mocked(listVersions).mockResolvedValue({
+      versions: Array.from({ length: 45 }, (_, i) => String(145 - i)), updatedCookies: [],
+    });
+    renderHistory();
+    await screen.findByText('v16.126');
+    expect(getVersionMetadata).toHaveBeenCalledTimes(20);
+    vi.useFakeTimers();
+    fireEvent.click(screen.getByRole('button', { name: 'search.versions.next' }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(200); });
+    expect(getVersionMetadata).toHaveBeenCalledTimes(20);
+    fireEvent.click(screen.getByRole('button', { name: 'search.versions.next' }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(349); });
+    expect(getVersionMetadata).toHaveBeenCalledTimes(20);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+    expect(getVersionMetadata).toHaveBeenCalledTimes(25);
+    expect(vi.mocked(getVersionMetadata).mock.calls.slice(20).map(([, , id]) => id))
+      .toEqual(['105', '104', '103', '102', '101']);
+  });
+
+  it('cancels the delayed metadata lookup when leaving before the delay ends', async () => {
+    vi.useFakeTimers();
+    let view!: ReturnType<typeof renderHistory>;
+    await act(async () => { view = renderHistory(); });
+    expect(screen.getByText('ID: 103')).toBeInTheDocument();
+    expect(getVersionMetadata).not.toHaveBeenCalled();
+    view.unmount();
+    await act(async () => { await vi.advanceTimersByTimeAsync(350); });
+    expect(getVersionMetadata).not.toHaveBeenCalled();
   });
 
   it('offers an explicit retry without continuously retrying a failed lookup', async () => {
