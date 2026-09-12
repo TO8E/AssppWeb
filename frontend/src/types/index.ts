@@ -34,6 +34,7 @@ export interface Account {
   password: string;
   appleId: string;
   store: string;
+  storeFront?: string;
   firstName: string;
   lastName: string;
   passwordToken: string;

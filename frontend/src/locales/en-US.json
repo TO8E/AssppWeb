@@ -454,6 +454,7 @@
   },
   "errors": {
     "download": {
+      "invalidResponse": "Apple {{endpoint}} returned an unexpected response (HTTP {{status}}, type: {{format}})",
       "redirectLocation": "Failed to retrieve redirect location",
       "passwordExpired": "Password token is expired",
       "licenseRequired": "License required - purchase the app first",

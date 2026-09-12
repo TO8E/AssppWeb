@@ -33,6 +33,7 @@ export async function authenticate(
 ): Promise<Account> {
   let cookies: Cookie[] = existingCookies ? [...existingCookies] : [];
   let storeFront = "";
+  let fullStoreFront = "";
   let lastError: Error | null = null;
 
   // Apple gates this endpoint behind a SAP signature, and producing one means
@@ -93,6 +94,7 @@ export async function authenticate(
       // Read store front
       const storeHeader = response.headers["x-set-apple-store-front"];
       if (storeHeader) {
+        fullStoreFront = storeHeader;
         const parts = storeHeader.split("-");
         if (parts[0]) {
           storeFront = parts[0];
@@ -160,6 +162,7 @@ export async function authenticate(
         password,
         appleId: (accountInfo.appleId as string) ?? "",
         store: storeFront,
+        storeFront: fullStoreFront || undefined,
         firstName: (address.firstName as string) ?? "",
         lastName: (address.lastName as string) ?? "",
         passwordToken: (dict.passwordToken as string) ?? "",

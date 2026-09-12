@@ -171,6 +171,7 @@ export function shouldRetryRedownload(
     httpStatus >= 200 &&
     httpStatus < 300 &&
     !response.failureType &&
+    !response.customerMessage &&
     String(response.status) === '0' &&
     Array.isArray(response.songList) &&
     response.songList.length === 0

@@ -70,6 +70,34 @@ describe("apple/authenticate", () => {
       .toBe(requestCall.body);
   });
 
+  it("preserves the complete storefront header for authenticated requests", async () => {
+    vi.mocked(appleRequest).mockResolvedValueOnce({
+      status: 200,
+      statusText: "OK",
+      headers: { "x-set-apple-store-front": "143465-19,34" },
+      rawHeaders: [],
+      body: buildPlist({
+        accountInfo: {
+          appleId: "test@example.com",
+          address: { firstName: "Test", lastName: "User" },
+        },
+        passwordToken: "token",
+        dsPersonId: "123",
+      }),
+    });
+
+    const account = await authenticate(
+      "test@example.com",
+      "password",
+      undefined,
+      undefined,
+      "aabbccddeeff",
+    );
+
+    expect(account.store).toBe("143465");
+    expect(account.storeFront).toBe("143465-19,34");
+  });
+
   it("signs the updated body on a two-factor retry", async () => {
     // Reuse the successful response shape from the normal login path.
     await authenticate("test@example.com", "password", "123456", undefined, "aabbccddeeff");

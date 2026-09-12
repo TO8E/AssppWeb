@@ -1,112 +1,47 @@
-import type { Account, Software } from "../types";
-import { appleRequest } from "./request";
-import { buildPlist, parsePlist } from "./plist";
-import { extractAndMergeCookies } from "./cookies";
-import {
-  shouldRetryRedownload,
-  redownloadEndpoint,
-  volumeStoreEndpoint,
-} from "./config";
+import { fetchStoreProduct } from './storeProduct';
+import type { Account, Software } from '../types';
 
 export async function listVersions(
   account: Account,
   app: Software,
 ): Promise<{ versions: string[]; updatedCookies: typeof account.cookies }> {
-  const deviceId = account.deviceIdentifier;
+  const { data: dict, updatedCookies: cookies } = await fetchStoreProduct(account, app);
 
-  let endpoint = volumeStoreEndpoint(account.pod, deviceId);
-  let requestHost = endpoint.host;
-  let requestPath = endpoint.path;
-  let triedRedownload = false;
-  let cookies = [...account.cookies];
-  let redirectAttempt = 0;
+  const songList = dict.songList as Record<string, any>[] | undefined;
+  if (!songList || songList.length === 0) {
+    if (dict.failureType) {
+      const failureType = String(dict.failureType);
 
-  while (redirectAttempt <= 3) {
-    const payload: Record<string, any> = {
-      creditDisplay: "",
-      guid: deviceId,
-      salableAdamId: app.id,
-    };
-
-    const plistBody = buildPlist(payload);
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/x-apple-plist",
-      "iCloud-DSID": account.directoryServicesIdentifier,
-      "X-Dsid": account.directoryServicesIdentifier,
-    };
-
-    const response = await appleRequest({
-      method: "POST",
-      host: requestHost,
-      path: requestPath,
-      headers,
-      body: plistBody,
-      cookies,
-    });
-
-    cookies = extractAndMergeCookies(response.rawHeaders, cookies);
-
-    if (response.status === 302) {
-      const location = response.headers["location"];
-      if (!location) {
-        throw new Error("Failed to retrieve redirect location");
-      }
-      const url = new URL(location);
-      requestHost = url.hostname;
-      requestPath = url.pathname + url.search;
-      redirectAttempt++;
-      continue;
-    }
-
-    const dict = parsePlist(response.body) as Record<string, any>;
-
-    if (!triedRedownload && shouldRetryRedownload(response.status, dict)) {
-      triedRedownload = true;
-      endpoint = redownloadEndpoint(deviceId);
-      requestHost = endpoint.host;
-      requestPath = endpoint.path;
-      redirectAttempt = 0;
-      continue;
-    }
-
-    const songList = dict.songList as Record<string, any>[] | undefined;
-    if (!songList || songList.length === 0) {
-      if (dict.failureType) {
-        const failureType = String(dict.failureType);
-
-        switch (failureType) {
-          case "2034":
-            throw new Error("Password token is expired");
-          case "9610":
-            throw new Error("License required - purchase the app first");
-          default: {
-            const msg = dict.customerMessage as string | undefined;
-            throw new Error(msg ?? "No items in response");
-          }
+      switch (failureType) {
+        case "2034":
+          throw new Error("Password token is expired");
+        case "9610":
+          throw new Error("License required - purchase the app first");
+        default: {
+          const msg = dict.customerMessage as string | undefined;
+          throw new Error(msg ?? "No items in response");
         }
       }
-      throw new Error("No items in response");
     }
-
-    const item = songList[0];
-    const metadata = item.metadata as Record<string, any>;
-    if (!metadata) {
-      throw new Error("Missing version identifiers");
-    }
-
-    const identifiers = metadata.softwareVersionExternalIdentifiers as any[];
-    if (!identifiers) {
-      throw new Error("Missing version identifiers");
-    }
-
-    const versions = identifiers.map((id) => String(id)).reverse();
-    if (versions.length === 0) {
-      throw new Error("No versions found");
-    }
-
-    return { versions, updatedCookies: cookies };
+    const customerMessage = dict.customerMessage as string | undefined;
+    throw new Error(customerMessage ?? "No items in response");
   }
 
-  throw new Error("Too many redirects");
+  const item = songList[0];
+  const metadata = item.metadata as Record<string, any>;
+  if (!metadata) {
+    throw new Error("Missing version identifiers");
+  }
+
+  const identifiers = metadata.softwareVersionExternalIdentifiers as any[];
+  if (!identifiers) {
+    throw new Error("Missing version identifiers");
+  }
+
+  const versions = identifiers.map((id) => String(id)).reverse();
+  if (versions.length === 0) {
+    throw new Error("No versions found");
+  }
+
+  return { versions, updatedCookies: cookies };
 }
