@@ -332,11 +332,21 @@ describe('VersionHistory manual version labels', () => {
   });
 
   it('retries only the manually selected failed row', async () => {
-    vi.mocked(getVersionMetadata).mockRejectedValueOnce(new Error('Temporary failure'));
-    renderHistory();
-    fireEvent.click((await screen.findAllByRole('button', { name: 'search.versions.fetchNumber' }))[0]);
-    fireEvent.click(await screen.findByRole('button', { name: 'search.versions.retryDetails' }));
-    await screen.findByText('v16.103');
+    const pending = deferred<Awaited<ReturnType<typeof getVersionMetadata>>>();
+    vi.mocked(getVersionMetadata).mockReturnValueOnce(pending.promise);
+    await act(async () => { renderHistory(); });
+    await act(async () => {
+      fireEvent.click(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })[0]);
+    });
+    expect(getVersionMetadata).toHaveBeenCalledOnce();
+    expect(screen.getByText('search.versions.loadingDetails')).toBeInTheDocument();
+    await act(async () => { pending.reject(new Error('Temporary failure')); });
+    expect(screen.queryByText('search.versions.loadingDetails')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'search.versions.fetchNumber' })).toHaveLength(2);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'search.versions.retryDetails' }));
+    });
+    expect(screen.getByText('v16.103')).toBeInTheDocument();
     expect(vi.mocked(getVersionMetadata).mock.calls.map(([, , id]) => id)).toEqual(['103', '103']);
   });
 
