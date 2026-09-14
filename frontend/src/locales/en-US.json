@@ -172,8 +172,6 @@
   "downloads": {
     "title": "Downloads",
     "new": "New Download",
-    "warning": "Packages are temporary and will be cleared on server restart. Download or install promptly.",
-    "warningShort": "Temporary; cleared on restart—save promptly.",
     "loading": "Loading downloads...",
     "emptyAll": "No downloads yet.",
     "emptyAllDesc": "Your download queue is empty. Head to the search page to explore and download the apps you need.",

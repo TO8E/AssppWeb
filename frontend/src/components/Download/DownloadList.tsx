@@ -193,8 +193,6 @@ export default function DownloadList() {
         ))}
       </div>
 
-      <p role="note" className="mb-5 text-sm leading-6 text-gray-500 dark:text-gray-400">{t('downloads.warning')}</p>
-
       {loading && tasks.length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-12">
           {t("downloads.loading")}
@@ -202,7 +200,7 @@ export default function DownloadList() {
       ) : sortedTasks.length === 0 ? (
         <EmptyState title={filter === 'all' ? t('downloads.emptyAll') : t('downloads.emptyFilter', { status: t(`downloads.status.${filter}`) })} description={filter === 'all' ? t('downloads.emptyAllDesc') : t('downloads.emptyFilterDesc')} action={filter === 'all' ? <Link to="/search" className={buttonClass('primary')}>{t('downloads.searchApps')}</Link> : undefined} />
       ) : (
-        <div className="ui-list">
+        <div className="ui-list" style={{ borderTop: 0 }}>
           {sortedTasks.map((task) => (
             <DownloadItem
               key={task.id}
