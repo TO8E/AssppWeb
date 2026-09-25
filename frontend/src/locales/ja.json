@@ -452,7 +452,7 @@
     "download": {
       "invalidResponse": "Apple {{endpoint}} が予期しない応答を返しました（HTTP {{status}}、種類: {{format}}）",
       "redirectLocation": "リダイレクト先を取得できませんでした",
-      "passwordExpired": "パスワードトークンの期限が切れています",
+      "passwordExpired": "ログインの有効期限が切れました。再認証してください。",
       "licenseRequired": "ライセンスが必要です - 先にアプリを購入してください",
       "downloadFailed": "ダウンロード失敗: {{failureType}}",
       "noItems": "レスポンスに項目がありません",

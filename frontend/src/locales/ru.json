@@ -452,7 +452,7 @@
     "download": {
       "invalidResponse": "Apple {{endpoint}} вернул неожиданный ответ (HTTP {{status}}, тип: {{format}})",
       "redirectLocation": "Не удалось получить адрес перенаправления",
-      "passwordExpired": "Токен пароля истек",
+      "passwordExpired": "Срок действия сеанса истёк. Пройдите повторную аутентификацию.",
       "licenseRequired": "Требуется лицензия - сначала купите приложение",
       "downloadFailed": "Ошибка загрузки: {{failureType}}",
       "noItems": "В ответе нет элементов",

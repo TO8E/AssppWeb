@@ -452,7 +452,7 @@
     "download": {
       "invalidResponse": "Apple {{endpoint}} 介面傳回異常回應（HTTP {{status}}，類型：{{format}}）",
       "redirectLocation": "無法取得重新導向位址",
-      "passwordExpired": "密碼權杖已過期",
+      "passwordExpired": "登入已過期，請重新認證",
       "licenseRequired": "需要授權 - 請先購買該應用程式",
       "downloadFailed": "下載失敗: {{failureType}}",
       "noItems": "回應中沒有項目",

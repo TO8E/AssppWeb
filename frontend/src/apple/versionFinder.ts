@@ -1,4 +1,5 @@
 import { fetchStoreProduct } from './storeProduct';
+import i18n from '../i18n';
 import type { Account, Software } from '../types';
 
 export async function listVersions(
@@ -13,8 +14,9 @@ export async function listVersions(
       const failureType = String(dict.failureType);
 
       switch (failureType) {
-        case "2034":
-          throw new Error("Password token is expired");
+        case '2034':
+        case '2042':
+          throw new Error(i18n.t('errors.download.passwordExpired'));
         case "9610":
           throw new Error("License required - purchase the app first");
         default: {

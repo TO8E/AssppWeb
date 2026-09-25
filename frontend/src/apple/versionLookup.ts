@@ -1,4 +1,5 @@
 import { fetchStoreProduct } from './storeProduct';
+import i18n from '../i18n';
 import type { Account, Software, VersionMetadata } from '../types';
 
 export async function getVersionMetadata(
@@ -13,6 +14,9 @@ export async function getVersionMetadata(
 
   const songList = dict.songList as Record<string, any>[] | undefined;
   if (!songList || songList.length === 0) {
+    if (['2034', '2042'].includes(String(dict.failureType))) {
+      throw new Error(i18n.t('errors.download.passwordExpired'));
+    }
     const customerMessage = dict.customerMessage as string | undefined;
     throw new Error(customerMessage ?? "No items in response");
   }
