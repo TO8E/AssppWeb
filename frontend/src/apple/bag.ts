@@ -1,18 +1,20 @@
-import { authHeaders } from "../api/client";
-import { parsePlist } from "./plist";
+import { authHeaders } from '../api/client';
+import { parsePlist } from './plist';
 
 export interface BagOutput {
   authURL: string;
 }
 
 export const defaultAuthURL =
-  "https://auth.itunes.apple.com/auth/v1/native/fast/";
+  'https://auth.itunes.apple.com/auth/v1/native/fast/';
 
-const NATIVE_AUTH_HOST = "auth.itunes.apple.com";
+const NATIVE_AUTH_HOST = 'auth.itunes.apple.com';
+const legacyAuthPath = '/WebObjects/MZFinance.woa/wa/authenticate';
+const legacyAuthHostPattern = /^(?:buy|p\d+-buy)\.itunes\.apple\.com$/;
 
-// The bag advertises the native auth endpoint without the /fast/ sub-path that
-// the login flow requires; the no-trailing-slash variant 301s to an HTML page.
-// Legacy endpoints on other hosts pass through unchanged.
+// Normalize initial bag URLs only; server-provided redirects stay unchanged.
+// The bare legacy path can return a 301 without Location (ipatool PR #609).
+// Native auth still requires the /fast/ sub-path and its trailing slash.
 export function normalizeAuthURL(rawURL: string): string {
   let url: URL;
   try {
@@ -20,12 +22,24 @@ export function normalizeAuthURL(rawURL: string): string {
   } catch {
     return rawURL;
   }
+  if (
+    legacyAuthHostPattern.test(url.hostname) &&
+    url.protocol === 'https:' &&
+    !url.username &&
+    !url.password &&
+    !url.hash &&
+    (!url.port || url.port === '443') &&
+    url.pathname === legacyAuthPath
+  ) {
+    url.pathname = `${legacyAuthPath}/`;
+    return url.toString();
+  }
   if (url.hostname !== NATIVE_AUTH_HOST) {
     return rawURL;
   }
-  let path = url.pathname.replace(/\/+$/, "");
-  if (!path.endsWith("/fast")) {
-    path += "/fast";
+  let path = url.pathname.replace(/\/+$/, '');
+  if (!path.endsWith('/fast')) {
+    path += '/fast';
   }
   url.pathname = `${path}/`;
   return url.toString();

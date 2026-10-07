@@ -114,4 +114,39 @@ describe("apple/authenticate", () => {
       .rejects.toThrow("setup failed");
     expect(appleRequest).not.toHaveBeenCalled();
   });
+
+  it('uses the normalized bag URL and preserves the signed POST at the redirected pod', async () => {
+    vi.mocked(fetchBag).mockResolvedValueOnce({
+      authURL:
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?foo=1&guid=old-value',
+    });
+    const redirectPath = '/WebObjects/MZFinance.woa/wa/authenticate?Pod=7&PRH=7';
+    vi.mocked(appleRequest).mockResolvedValueOnce({
+      status: 301,
+      statusText: 'Moved Permanently',
+      headers: { location: `https://p7-buy.itunes.apple.com${redirectPath}` },
+      rawHeaders: [['Set-Cookie', 'route=pod7; Domain=.itunes.apple.com; Path=/; Secure']],
+      body: '',
+    });
+
+    await authenticate('test@example.com', 'password', '123456', undefined, 'aabbccddeeff');
+
+    expect(appleRequest).toHaveBeenCalledTimes(2);
+    const [initial, redirected] = vi.mocked(appleRequest).mock.calls.map(([request]) => request);
+    const initialURL = new URL(`https://${initial.host}${initial.path}`);
+    expect(initialURL.pathname).toBe('/WebObjects/MZFinance.woa/wa/authenticate/');
+    expect(initialURL.searchParams.getAll('guid')).toEqual(['aabbccddeeff']);
+    expect(initialURL.searchParams.get('foo')).toBe('1');
+    expect(redirected.host).toBe('p7-buy.itunes.apple.com');
+    expect(redirected.path).toBe(redirectPath);
+    expect(redirected.method).toBe('POST');
+    expect(redirected.body).toBe(initial.body);
+    expect(redirected.body).toContain('password123456');
+    expect(redirected.cookies).toContainEqual(expect.objectContaining({ name: 'route', value: 'pod7' }));
+    expect(signAction).toHaveBeenCalledTimes(2);
+    for (const [index, request] of [initial, redirected].entries()) {
+      expect(request.headers?.['X-Apple-ActionSignature']).toBe('AQID/w==');
+      expect(new TextDecoder().decode(vi.mocked(signAction).mock.calls[index][0])).toBe(request.body);
+    }
+  });
 });

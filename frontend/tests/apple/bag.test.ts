@@ -11,7 +11,7 @@ describe("apple/bag", () => {
     vi.restoreAllMocks();
   });
 
-  it("parses authenticateAccount from urlBag", async () => {
+  it('normalizes the legacy authentication endpoint from urlBag', async () => {
     const xml = buildPlist({
       urlBag: {
         authenticateAccount:
@@ -29,7 +29,27 @@ describe("apple/bag", () => {
     const result = await fetchBag("aabbccddeeff");
 
     expect(result.authURL).toBe(
-      "https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate",
+      'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/',
+    );
+  });
+
+  it('preserves pod routing and encoded query parameters from the plist root', async () => {
+    const xml = buildPlist({
+      authenticateAccount:
+        'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate?Pod=7&PRH=7&routing=a%2Fb+c',
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: async () => xml,
+      }),
+    );
+
+    const result = await fetchBag('aabbccddeeff');
+
+    expect(result.authURL).toBe(
+      'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?Pod=7&PRH=7&routing=a%2Fb+c',
     );
   });
 
@@ -106,10 +126,50 @@ describe("apple/bag", () => {
       ).toBe("https://auth.itunes.apple.com/auth/v1/native/fast/");
     });
 
-    it("leaves legacy endpoints on other hosts unchanged", () => {
-      const legacy =
-        "https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate";
-      expect(normalizeAuthURL(legacy)).toBe(legacy);
+    it.each([
+      [
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate',
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/',
+      ],
+      [
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/',
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/',
+      ],
+      [
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate?guid=aabbccddeeff&routing=a%2Fb+c',
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?guid=aabbccddeeff&routing=a%2Fb+c',
+      ],
+      [
+        'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate?Pod=7&PRH=7',
+        'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?Pod=7&PRH=7',
+      ],
+      [
+        'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?Pod=7&PRH=7',
+        'https://p7-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/?Pod=7&PRH=7',
+      ],
+      [
+        'https://buy.itunes.apple.com:443/WebObjects/MZFinance.woa/wa/authenticate',
+        'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/',
+      ],
+    ])('normalizes only the initial legacy authentication URL: %s', (input, expected) => {
+      expect(normalizeAuthURL(input)).toBe(expected);
+    });
+
+    it.each([
+      'https://example.com/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://buy.itunes.apple.com.example.com/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://px-buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://buy.itunes.apple.com/other',
+      'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate/extra',
+      'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate//',
+      'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate%2f',
+      'http://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://user:password@buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://buy.itunes.apple.com:8443/WebObjects/MZFinance.woa/wa/authenticate',
+      'https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/authenticate#fragment',
+      'not a URL',
+    ])('leaves unrelated or unsupported URLs unchanged: %s', (url) => {
+      expect(normalizeAuthURL(url)).toBe(url);
     });
   });
 });
